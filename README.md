@@ -6,15 +6,15 @@ A module to create symbols in Framer
 
 #### Introduction
 
-This module is based on the earlier exploration of [Andreas Wahlström's createClass-module](https://github.com/awt2542/createClass-for-Framer) 
+This module is based on the earlier exploration of [Andreas Wahlström's createClass-module](https://github.com/awt2542/createClass-for-Framer)
 
-The idea is to easily create reusable components in Framer, without the hassle of actually writing a class. 
+The idea is to easily create reusable components in Framer, without the hassle of actually writing a class.
 
 [Weird, chaotic demo](https://framer.cloud/OEfot/)
 
 #### Getting started
 
-**Step 1** Download the `symbols-example.framer` project and copy `Symbol.coffee` in your project's `/modules`-folder.
+**Step 1** Download and copy `Symbol.coffee` in your project's `/modules`-folder.
 
 **Step 2** Require the `Symbol`-module and convert anything you want to reuse into a Symbol
 
@@ -58,7 +58,7 @@ btn.addSymbolState('disabled', button_disabled)
 btn.addSymbolState('active', button_active)
 ```
 
-... now your `btn`-symbol has 3 states: `default`, `disabled` and `active`! 
+... now your `btn`-symbol has 3 states: `default`, `disabled` and `active`!
 
 [Try the buttons protoype](https://framer.cloud/qjNTq/)
 
