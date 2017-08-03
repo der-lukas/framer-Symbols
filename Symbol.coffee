@@ -95,21 +95,17 @@ exports.createSymbol = (layer) ->
 
       @.on Events.StateSwitchStart, (from, to) ->
         for child in @.subLayers
-          templateBackup = {}
           if child.constructor.name == "TextLayer"
             textBackup = child.text
 
-            if Object.keys(child.template).length > 0
-              templateBackup = child.template
+            # if Object.keys(child.template).length > 0
+            #   templateBackup = child.template
 
-          # child.stateCycle(to)
-          child.stateSwitch(to)
+            child.stateSwitch(to)
 
-      # @.on Events.AnimationEnd, (animation, layer) ->
-        # print animation, layer
-          if child.constructor.name == "TextLayer"
-            child.template = templateBackup
             child.text = textBackup
+          else
+            child.stateCycle(to)
 
     addSymbolState: (stateName, target) ->
       @.states["#{stateName}"] =
