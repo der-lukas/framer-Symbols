@@ -96,14 +96,19 @@ exports.createSymbol = (layer) ->
       @.on Events.StateSwitchStart, (from, to) ->
         for child in @.subLayers
           if child.constructor.name == "TextLayer"
+
             textBackup = child.text
 
-            # if Object.keys(child.template).length > 0
-            #   templateBackup = child.template
+            if Object.keys(child.template).length > 0
+              templateBackup = child.template
 
             child.stateSwitch(to)
 
             child.text = textBackup
+            
+            if Object.keys(child.template).length > 0
+              child.template = templateBackup
+
           else
             child.stateCycle(to)
 
@@ -132,26 +137,6 @@ exports.createSymbol = (layer) ->
 
       for child in @.subLayers
         child.states["#{stateName}"] = target.childrenWithName(child.name)[0].states["default"]
-          # backgroundColor: target.childrenWithName(child.name).backgroundColor
-          # opacity: target.childrenWithName(child.name).props.opacity
-          # borderWidth: target.childrenWithName(child.name).props.borderWidth
-          # borderColor: target.childrenWithName(child.name).props.borderColor
-          # borderRadius: target.childrenWithName(child.name).props.borderRadius
-          # shadowSpread: target.childrenWithName(child.name).props.shadowSpread
-          # shadowX: target.childrenWithName(child.name).props.shadowX
-          # shadowY: target.childrenWithName(child.name).props.shadowY
-          # shadowBlur: target.childrenWithName(child.name).props.shadowBlur
-          # shadowColor: target.childrenWithName(child.name).props.shadowColor
-          # scale: target.childrenWithName(child.name).props.scale
-          # scaleX: target.childrenWithName(child.name).props.scaleX
-          # scaleY: target.childrenWithName(child.name).props.scaleY
-          # rotation: target.childrenWithName(child.name).props.rotation
-          # rotationX: target.childrenWithName(child.name).props.rotationX
-          # rotationY: target.childrenWithName(child.name).props.rotationY
-          # originX: target.childrenWithName(child.name).props.originX
-          # originY: target.childrenWithName(child.name).props.originY
-          # skewX: target.childrenWithName(child.name).props.skewX
-          # skewY: target.childrenWithName(child.name).props.skewY
 
       target.destroy()
 
