@@ -72,6 +72,16 @@ exports.createSymbol = (layer) ->
               @[child.name].name = child.name
               @[child.name].parent = @[subLayer.name]
               @[child.name].textAlign = child.props.styledTextOptions.alignment
+            else if child.__framerInstanceInfo.framerClass == "SVGLayer"
+              @[child.name] = new SVGLayer
+
+              @[child.name]._DefinedPropertiesValuesKey =  child._DefinedPropertiesValuesKey
+              @[child.name]._element = child._element
+              @[child.name]._elementHTML = child._elementHTML
+              @[child.name].props = child.props
+
+              @[child.name].name = child.name
+              @[child.name].parent = @[subLayer.name]
             else
               @[child.name] = new Layer
 
@@ -86,6 +96,19 @@ exports.createSymbol = (layer) ->
             @[subLayer.name].name = subLayer.name
             @[subLayer.name].parent = @
             @[subLayer.name].textAlign = subLayer.props.styledTextOptions.alignment
+          else if subLayer.__framerInstanceInfo.framerClass == "SVGLayer"
+            @[subLayer.name] = new SVGLayer
+            @[subLayer.name].backgroundColor = null
+            @[subLayer.name].width = null
+            @[subLayer.name].height = null
+
+            @[subLayer.name]._DefinedPropertiesValuesKey =  subLayer._DefinedPropertiesValuesKey
+            @[subLayer.name]._element = subLayer._element
+            @[subLayer.name]._elementHTML = subLayer._elementHTML
+            @[subLayer.name].props = subLayer.props
+
+            @[subLayer.name].name = subLayer.name
+            @[subLayer.name].parent = @
           else
             @[subLayer.name] = new Layer
 
