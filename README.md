@@ -1,3 +1,4 @@
+![framerdemo](https://dr5mo5s7lqrtc.cloudfront.net/items/3z2z2A3P353E0Z1M3C2V/Screen%20Recording%202017-08-05%20at%2004.02%20PM.gif?X-CloudApp-Visitor-Id=2808700&v=08cd0efb)
 
 # framer-Symbols
 A module to create symbols in Framer
