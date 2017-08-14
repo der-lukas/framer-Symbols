@@ -1,7 +1,7 @@
-![framerdemo](https://dr5mo5s7lqrtc.cloudfront.net/items/3z2z2A3P353E0Z1M3C2V/Screen%20Recording%202017-08-05%20at%2004.02%20PM.gif?X-CloudApp-Visitor-Id=2808700&v=08cd0efb)
-
 # framer-Symbols
 A module to create symbols in Framer
+
+![framerdemo](https://dr5mo5s7lqrtc.cloudfront.net/items/3z2z2A3P353E0Z1M3C2V/Screen%20Recording%202017-08-05%20at%2004.02%20PM.gif?X-CloudApp-Visitor-Id=2808700&v=08cd0efb)
 
 ----------
 
@@ -68,3 +68,13 @@ btn.addSymbolState('active', button_active)
 This module is still very experimental and will probably sooner than later be unnecessary, because the beautiful people at Framer will make a proper implementation for something like this.
 
 Meanwhile I'm going to keep hacking on this and would love your contribution! <3
+
+----------
+#### TODO
+
+- [x] Add textLayer animations
+- [x] Add SVGLayer support
+- [ ] Fix layer-nesting
+- [ ] Better README
+- [ ] Discover support for reuse in other projects
+- [ ] Discover nested symbols
