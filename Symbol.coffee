@@ -31,7 +31,7 @@ exports.createSymbol = (layer) ->
 
       @.name = options.name
       @.size = options.size
-      # @.image = options.image
+      @.image = options.image
       @.backgroundColor = options.backgroundColor
       @.opacity = options.opacity
       @.borderWidth = options.borderWidth
@@ -65,7 +65,7 @@ exports.createSymbol = (layer) ->
           @[subLayer.name].name = subLayer.name
           @[subLayer.name].parent = @
           for child in subLayer.children
-            if child.constructor.name == "TextLayer"
+            if child.__framerInstanceInfo.framerClass == "TextLayer"
               @[child.name] = new TextLayer
 
               @[child.name].props = child.props
@@ -89,7 +89,7 @@ exports.createSymbol = (layer) ->
               @[child.name].name = child.name
               @[child.name].parent = @[subLayer.name]
         else if subLayer.parent is layer
-          if subLayer.constructor.name == "TextLayer"
+          if subLayer.__framerInstanceInfo.framerClass == "TextLayer"
             @[subLayer.name] = new TextLayer
 
             @[subLayer.name].props = subLayer.props
@@ -119,44 +119,28 @@ exports.createSymbol = (layer) ->
       @.on Events.StateSwitchStart, (from, to) ->
         for child in @.subLayers
           if child.constructor.name == "TextLayer"
-
-            textBackup = child.text
+            child.states[to].text = child.text
 
             if Object.keys(child.template).length > 0
-              templateBackup = child.template
-
-            child.stateSwitch(to)
-
-            child.text = textBackup
-            
-            if Object.keys(child.template).length > 0
-              child.template = templateBackup
-
+              child.states[to].template = child.template
           else
-            child.stateCycle(to)
+            if child.image && (child.states[to].image != child.image)
+              child.states[to].image = child.image
+
+          child.stateCycle(to)
 
     addSymbolState: (stateName, target) ->
-      @.states["#{stateName}"] =
-          backgroundColor: target.backgroundColor
-          opacity: target.props.opacity
-          borderWidth: target.props.borderWidth
-          borderColor: target.props.borderColor
-          borderRadius: target.props.borderRadius
-          shadowSpread: target.props.shadowSpread
-          shadowX: target.props.shadowX
-          shadowY: target.props.shadowY
-          shadowBlur: target.props.shadowBlur
-          shadowColor: target.props.shadowColor
-          scale: target.props.scale
-          scaleX: target.props.scaleX
-          scaleY: target.props.scaleY
-          rotation: target.props.rotation
-          rotationX: target.props.rotationX
-          rotationY: target.props.rotationY
-          originX: target.props.originX
-          originY: target.props.originY
-          skewX: target.props.skewX
-          skewY: target.props.skewY
+      backupX = @.x
+      backupY = @.y
+      backupWidth = @.width
+      backupHeight = @.height
+
+      @.states["#{stateName}"] = target.states["default"]
+
+      @.states["#{stateName}"].width = backupWidth
+      @.states["#{stateName}"].height = backupHeight
+      @.states["#{stateName}"].x = backupX
+      @.states["#{stateName}"].y = backupY
 
       for child in @.subLayers
         child.states["#{stateName}"] = target.childrenWithName(child.name)[0].states["default"]
