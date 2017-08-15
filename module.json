@@ -1,0 +1,11 @@
+{
+    "name": "Symbols",
+    "description": "Animate individual HTML and SVG elements inside one layer's html property",
+    "author": "Lukas Guschlbauer",
+
+    "require": "{createSymbol} = require 'Symbol'",
+    "install": "Symbol.coffee",
+    "example": "example.coffee",
+
+    "thumb": "thumb.gif"
+}
