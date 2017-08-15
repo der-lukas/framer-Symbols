@@ -2,6 +2,7 @@ exports.createSymbol = (layer) ->
   class Temp extends Layer
     constructor: (options={}) ->
       options.backgroundColor ?= layer.backgroundColor
+      options.image ?= layer.image
       options.opacity ?= layer.props.opacity
       options.borderWidth ?= layer.props.borderWidth
       options.borderColor ?= layer.props.borderColor
@@ -130,17 +131,27 @@ exports.createSymbol = (layer) ->
           child.stateCycle(to)
 
     addSymbolState: (stateName, target) ->
-      backupX = @.x
-      backupY = @.y
-      backupWidth = @.width
-      backupHeight = @.height
-
-      @.states["#{stateName}"] = target.states["default"]
-
-      @.states["#{stateName}"].width = backupWidth
-      @.states["#{stateName}"].height = backupHeight
-      @.states["#{stateName}"].x = backupX
-      @.states["#{stateName}"].y = backupY
+      @.states["#{stateName}"] =
+          backgroundColor: target.states["default"].backgroundColor
+          opacity: target.states["default"].opacity
+          borderWidth: target.states["default"].borderWidth
+          borderColor: target.states["default"].borderColor
+          borderRadius: target.states["default"].borderRadius
+          shadowSpread: target.states["default"].shadowSpread
+          shadowX: target.states["default"].shadowX
+          shadowY: target.states["default"].shadowY
+          shadowBlur: target.states["default"].shadowBlur
+          shadowColor: target.states["default"].shadowColor
+          scale: target.states["default"].scale
+          scaleX: target.states["default"].scaleX
+          scaleY: target.states["default"].scaleY
+          rotation: target.states["default"].rotation
+          rotationX: target.states["default"].rotationX
+          rotationY: target.states["default"].rotationY
+          originX: target.states["default"].originX
+          originY: target.states["default"].originY
+          skewX: target.states["default"].skewX
+          skewY: target.states["default"].skewY
 
       for child in @.subLayers
         child.states["#{stateName}"] = target.childrenWithName(child.name)[0].states["default"]
