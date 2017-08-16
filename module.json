@@ -1,6 +1,6 @@
 {
     "name": "Symbols",
-    "description": "Animate individual HTML and SVG elements inside one layer's html property",
+    "description": "A module to create symbols in Framer",
     "author": "Lukas Guschlbauer",
 
     "require": "{createSymbol} = require 'Symbol'",
