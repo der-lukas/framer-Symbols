@@ -59,7 +59,7 @@ But wait... there's more! The module also gives you the power to create differen
 
 You can either apply **common** or **specific** states.
 
-#### Common States
+### Common States
 Common states apply to **ALL** symbol-instances.
 
 They get applied on initialization of the Symbol as an `Array`:
@@ -105,7 +105,7 @@ buttonInstanceTwo = new Button
 
 ... now both `buttonInstanceOne` and `buttonInstanceTwo` have the 3 states `default, disabled` and `active`.
 
-#### Specific States
+### Specific States
 Specific states apply to a... specific instance :scream_cat:
 
 Specific states are being applied with `layer.addSymbolState(name, template)`
@@ -138,16 +138,13 @@ buttonInstanceTwo.addSymbolState('specific', button_specific)
 [Try the buttons protoype](https://framer.cloud/qjNTq/)
 
 ----------
-#### Disclaimer
+## Disclaimer
 This module is still very experimental and will probably sooner than later be unnecessary, because the beautiful people at Framer will make a proper implementation for something like this.
 
 Meanwhile I'm going to keep hacking on this and would love your contribution! <3
 
-#### Credits
+## Credits
 The code is based on the earlier exploration of [Andreas Wahlström's createClass-module](https://github.com/awt2542/createClass-for-Framer) - so thanks for that! :tada:
-
-##### * Pssst! It actually is a class...
-..."Symbol" is just a synonym taken from Sketch...
 
 ----------
 #### TODO
@@ -159,3 +156,7 @@ The code is based on the earlier exploration of [Andreas Wahlström's createClas
 - [ ] Improve README
 - [ ] Discover support for reuse in other projects
 - [ ] Discover nested symbols
+
+----------
+##### * Pssst! It actually is a class...
+..."Symbol" is just a synonym taken from Sketch...
