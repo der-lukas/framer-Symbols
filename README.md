@@ -53,9 +53,9 @@ buttonInstance = new Button
 ... now you have your `Button`-symbol ready to use and you can go back in **Design-Mode**, edit away and the changes will reflect in all of your instances in Code!
 
 ## Symbol States
-But wait... there's more! The module also gives you the power to create different states for your symbol in **Design-Mode** and apply those in Code.
-
 ![framerdemo](https://dr5mo5s7lqrtc.cloudfront.net/items/440L270G0E3I0a2n263W/Bildschirmfoto%202017-08-02%20um%2021.43.45.png?X-CloudApp-Visitor-Id=2808700&v=91c69262)
+
+But wait... there's more! The module also gives you the power to create different states for your symbol in **Design-Mode** and apply those in Code.
 
 You can either apply **common** or **specific** states.
 
