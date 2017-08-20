@@ -1,29 +1,27 @@
 copySourceToTarget = (source, target=false) ->
   if source.children.length > 0
     for subLayer in source.descendants
-      if subLayer.parent is source
+      if subLayer.__framerInstanceInfo.framerClass == "TextLayer"
+        target[subLayer.name] = new TextLayer
+        target[subLayer.name].textAlign = subLayer.props.styledTextOptions.alignment
+      else if subLayer.__framerInstanceInfo.framerClass == "SVGLayer"
+        target[subLayer.name] = new SVGLayer
+        target[subLayer.name].backgroundColor = null
+        target[subLayer.name].width = null
+        target[subLayer.name].height = null
+
+        target[subLayer.name]._DefinedPropertiesValuesKey = subLayer._DefinedPropertiesValuesKey
+        target[subLayer.name]._element = subLayer._element
+        target[subLayer.name]._elementHTML = subLayer._elementHTML
+      else
         target[subLayer.name] = new Layer
-        target[subLayer.name].props = subLayer.props
-        target[subLayer.name].name = subLayer.name
+
+      target[subLayer.name].props = subLayer.props
+      target[subLayer.name].name = subLayer.name
+
+      if subLayer.parent is source
         target[subLayer.name].parent = target
       else
-        if subLayer.__framerInstanceInfo.framerClass == "TextLayer"
-          target[subLayer.name] = new TextLayer
-          target[subLayer.name].textAlign = subLayer.props.styledTextOptions.alignment
-        else if subLayer.__framerInstanceInfo.framerClass == "SVGLayer"
-          target[subLayer.name] = new SVGLayer
-          target[subLayer.name].backgroundColor = null
-          target[subLayer.name].width = null
-          target[subLayer.name].height = null
-
-          target[subLayer.name]._DefinedPropertiesValuesKey = subLayer._DefinedPropertiesValuesKey
-          target[subLayer.name]._element = subLayer._element
-          target[subLayer.name]._elementHTML = subLayer._elementHTML
-        else
-          target[subLayer.name] = new Layer
-
-        target[subLayer.name].props = subLayer.props
-        target[subLayer.name].name = subLayer.name
         target[subLayer.name].parent = target[subLayer.parent.name]
 
 copyStatesFromTarget = (source, target, stateName) ->
