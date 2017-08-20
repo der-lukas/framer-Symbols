@@ -25,13 +25,13 @@ copySourceToTarget = (source, target=false) ->
         target[subLayer.name].parent = target[subLayer.parent.name]
 
 copyStatesFromTarget = (source, target, stateName) ->
-  # source.states["#{stateName}"] = target.states["default"]
-  for subLayer in source.subLayers
-    if subLayer.name == target.childrenWithName(subLayer.name)[0].name
-      subLayer.states["#{stateName}"] = target.childrenWithName(subLayer.name)[0].states["default"]
+  targets = []
 
-    newTarget = target.children[0]
-    copyStatesFromTarget(subLayer, newTarget, stateName)
+  for layer in target.descendants
+    targets[layer.name] = layer
+
+  for subLayer in source.descendants
+    subLayer.states["#{stateName}"] = targets[subLayer.name].states["default"]
 
 Layer::addSymbolState = (stateName, target) ->
   @.states["#{stateName}"] =
@@ -124,7 +124,7 @@ exports.Symbol = (layer, states=false) ->
 
       if states
         for state in states
-          @.addSymbolState(state.name, state.target)
+          @.addSymbolState(state.name, state.template)
 
       @.on Events.StateSwitchStart, (from, to) ->
         for child in @.descendants
