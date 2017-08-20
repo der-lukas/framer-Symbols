@@ -1,5 +1,68 @@
-exports.createSymbol = (layer) ->
-  class Temp extends Layer
+copySourceToTarget = (source, target=false) ->
+  if source.children.length > 0
+    for subLayer in source.descendants
+      if subLayer.parent is source
+        target[subLayer.name] = new Layer
+        target[subLayer.name].props = subLayer.props
+        target[subLayer.name].name = subLayer.name
+        target[subLayer.name].parent = target
+      else
+        if subLayer.__framerInstanceInfo.framerClass == "TextLayer"
+          target[subLayer.name] = new TextLayer
+          target[subLayer.name].textAlign = subLayer.props.styledTextOptions.alignment
+        else if subLayer.__framerInstanceInfo.framerClass == "SVGLayer"
+          target[subLayer.name] = new SVGLayer
+          target[subLayer.name].backgroundColor = null
+          target[subLayer.name].width = null
+          target[subLayer.name].height = null
+
+          target[subLayer.name]._DefinedPropertiesValuesKey = subLayer._DefinedPropertiesValuesKey
+          target[subLayer.name]._element = subLayer._element
+          target[subLayer.name]._elementHTML = subLayer._elementHTML
+        else
+          target[subLayer.name] = new Layer
+
+        target[subLayer.name].props = subLayer.props
+        target[subLayer.name].name = subLayer.name
+        target[subLayer.name].parent = target[subLayer.parent.name]
+
+copyStatesFromTarget = (source, target, stateName) ->
+  # source.states["#{stateName}"] = target.states["default"]
+  for subLayer in source.subLayers
+    if subLayer.name == target.childrenWithName(subLayer.name)[0].name
+      subLayer.states["#{stateName}"] = target.childrenWithName(subLayer.name)[0].states["default"]
+
+    newTarget = target.children[0]
+    copyStatesFromTarget(subLayer, newTarget, stateName)
+
+Layer::addSymbolState = (stateName, target) ->
+  @.states["#{stateName}"] =
+      backgroundColor: target.states["default"].backgroundColor
+      opacity: target.states["default"].opacity
+      borderWidth: target.states["default"].borderWidth
+      borderColor: target.states["default"].borderColor
+      borderRadius: target.states["default"].borderRadius
+      shadowSpread: target.states["default"].shadowSpread
+      shadowX: target.states["default"].shadowX
+      shadowY: target.states["default"].shadowY
+      shadowBlur: target.states["default"].shadowBlur
+      shadowColor: target.states["default"].shadowColor
+      scale: target.states["default"].scale
+      scaleX: target.states["default"].scaleX
+      scaleY: target.states["default"].scaleY
+      rotation: target.states["default"].rotation
+      rotationX: target.states["default"].rotationX
+      rotationY: target.states["default"].rotationY
+      originX: target.states["default"].originX
+      originY: target.states["default"].originY
+      skewX: target.states["default"].skewX
+      skewY: target.states["default"].skewY
+
+  copyStatesFromTarget(@, target, stateName)
+  target.destroy()
+
+exports.Symbol = (layer, states=false) ->
+  class Symbol extends Layer
     constructor: (options={}) ->
       options.backgroundColor ?= layer.backgroundColor
       options.image ?= layer.image
@@ -59,66 +122,14 @@ exports.createSymbol = (layer) ->
 
       @.customProps = options.customProps
 
-      for subLayer in layer.descendants
-        if subLayer.children.length > 0
-          @[subLayer.name] = new Layer
-          @[subLayer.name].props = subLayer.props
-          @[subLayer.name].name = subLayer.name
-          @[subLayer.name].parent = @
-          for child in subLayer.children
-            if child.__framerInstanceInfo.framerClass == "TextLayer"
-              @[child.name] = new TextLayer
+      copySourceToTarget(layer, @)
 
-              @[child.name].props = child.props
-              @[child.name].name = child.name
-              @[child.name].parent = @[subLayer.name]
-              @[child.name].textAlign = child.props.styledTextOptions.alignment
-            else if child.__framerInstanceInfo.framerClass == "SVGLayer"
-              @[child.name] = new SVGLayer
-
-              @[child.name]._DefinedPropertiesValuesKey =  child._DefinedPropertiesValuesKey
-              @[child.name]._element = child._element
-              @[child.name]._elementHTML = child._elementHTML
-              @[child.name].props = child.props
-
-              @[child.name].name = child.name
-              @[child.name].parent = @[subLayer.name]
-            else
-              @[child.name] = new Layer
-
-              @[child.name].props = child.props
-              @[child.name].name = child.name
-              @[child.name].parent = @[subLayer.name]
-        else if subLayer.parent is layer
-          if subLayer.__framerInstanceInfo.framerClass == "TextLayer"
-            @[subLayer.name] = new TextLayer
-
-            @[subLayer.name].props = subLayer.props
-            @[subLayer.name].name = subLayer.name
-            @[subLayer.name].parent = @
-            @[subLayer.name].textAlign = subLayer.props.styledTextOptions.alignment
-          else if subLayer.__framerInstanceInfo.framerClass == "SVGLayer"
-            @[subLayer.name] = new SVGLayer
-            @[subLayer.name].backgroundColor = null
-            @[subLayer.name].width = null
-            @[subLayer.name].height = null
-
-            @[subLayer.name]._DefinedPropertiesValuesKey =  subLayer._DefinedPropertiesValuesKey
-            @[subLayer.name]._element = subLayer._element
-            @[subLayer.name]._elementHTML = subLayer._elementHTML
-            @[subLayer.name].props = subLayer.props
-
-            @[subLayer.name].name = subLayer.name
-            @[subLayer.name].parent = @
-          else
-            @[subLayer.name] = new Layer
-
-            @[subLayer.name].props = subLayer.props
-            @[subLayer.name].name = subLayer.name
-            @[subLayer.name].parent = @
+      if states
+        for state in states
+          @.addSymbolState(state.name, state.target)
 
       @.on Events.StateSwitchStart, (from, to) ->
-        for child in @.subLayers
+        for child in @.descendants
           if child.constructor.name == "TextLayer"
             child.states[to].text = child.text
 
@@ -130,32 +141,7 @@ exports.createSymbol = (layer) ->
 
           child.stateCycle(to)
 
-    addSymbolState: (stateName, target) ->
-      @.states["#{stateName}"] =
-          backgroundColor: target.states["default"].backgroundColor
-          opacity: target.states["default"].opacity
-          borderWidth: target.states["default"].borderWidth
-          borderColor: target.states["default"].borderColor
-          borderRadius: target.states["default"].borderRadius
-          shadowSpread: target.states["default"].shadowSpread
-          shadowX: target.states["default"].shadowX
-          shadowY: target.states["default"].shadowY
-          shadowBlur: target.states["default"].shadowBlur
-          shadowColor: target.states["default"].shadowColor
-          scale: target.states["default"].scale
-          scaleX: target.states["default"].scaleX
-          scaleY: target.states["default"].scaleY
-          rotation: target.states["default"].rotation
-          rotationX: target.states["default"].rotationX
-          rotationY: target.states["default"].rotationY
-          originX: target.states["default"].originX
-          originY: target.states["default"].originY
-          skewX: target.states["default"].skewX
-          skewY: target.states["default"].skewY
-
-      for child in @.subLayers
-        child.states["#{stateName}"] = target.childrenWithName(child.name)[0].states["default"]
-
-      target.destroy()
-
     layer.destroy()
+
+# A backup for the deprecated way of calling the class
+exports.createSymbol = (layer, states) -> exports.Symbol(layer, states)
