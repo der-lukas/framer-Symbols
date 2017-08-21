@@ -33,6 +33,11 @@ copyStatesFromTarget = (source, target, stateName) ->
   for subLayer in source.descendants
     subLayer.states["#{stateName}"] = targets[subLayer.name].states["default"]
 
+Layer::replaceWithSymbol = (symbol) ->
+  for stateName in symbol.stateNames
+    symbol.states["#{stateName}"].point = @.point
+  @.destroy()
+
 Layer::addSymbolState = (stateName, target) ->
   @.states["#{stateName}"] =
       backgroundColor: target.states["default"].backgroundColor
@@ -127,6 +132,10 @@ exports.Symbol = (layer, states=false) ->
           @.addSymbolState(state.name, state.template)
 
       @.on Events.StateSwitchStart, (from, to) ->
+        if to is "default" and ((@.states[to].x isnt @.x) or (@.states[to].y isnt @.y))
+          @.states[to].x = @.x
+          @.states[to].y = @.y
+
         for child in @.descendants
           if child.constructor.name == "TextLayer"
             child.states[to].text = child.text
