@@ -3,7 +3,7 @@
     "description": "A module to create symbols in Framer",
     "author": "Lukas Guschlbauer",
 
-    "require": "{createSymbol} = require 'Symbol'",
+    "require": "{Symbol} = require 'Symbol'",
     "install": "Symbol.coffee",
     "example": "example.coffee",
 
