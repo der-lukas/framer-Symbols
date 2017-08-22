@@ -61,13 +61,14 @@ You can either apply **common** or **specific** states.
 
 ### Common States
 Common states apply to **ALL** symbol-instances.
+They are being applied on initialization of the Symbol.
 
-They get applied on initialization of the Symbol as an `Array`:
+For each state you can define following properties:
 
 Property | Type | Description
 -------- | ---- | -------
-`name` | string | The name of the state
-`template` | layer | The template that should be used as state
+`template` | layer | `required` The template that should be used as state
+`animationOptions` | Object | `optional` The applied animation options [Framer Docs](https://framer.com/docs/#layer.states)
 
 ##### Example
 
@@ -76,16 +77,17 @@ Property | Type | Description
 {Symbol} = require 'Symbol'
 
 # Create common states
-commonStates = [
-	{
-		name: "disabled"
+commonStates =
+	disabled:
 		template: button_disabled
-	},
-	{
-		name: "active"
+		animationOptions:
+			curve: Spring(damping: 1)
+			time: 0.7
+	active:
 		template: button_active
-	}
-]
+		animationOptions:
+			curve: Bezier.easeInOut
+			time: 1
 
 # Initialize your symbol
 Button = new Symbol(button_default, commonStates)
