@@ -24,7 +24,7 @@ copySourceToTarget = (source, target=false) ->
       else
         target[subLayer.name].parent = target[subLayer.parent.name]
 
-copyStatesFromTarget = (source, target, stateName) ->
+copyStatesFromTarget = (source, target, stateName, animationOptions) ->
   targets = []
 
   for layer in target.descendants
@@ -32,13 +32,15 @@ copyStatesFromTarget = (source, target, stateName) ->
 
   for subLayer in source.descendants
     subLayer.states["#{stateName}"] = targets[subLayer.name].states["default"]
+    subLayer.states["#{stateName}"].animationOptions = animationOptions
+
 
 Layer::replaceWithSymbol = (symbol) ->
   for stateName in symbol.stateNames
     symbol.states["#{stateName}"].point = @.point
   @.destroy()
 
-Layer::addSymbolState = (stateName, target) ->
+Layer::addSymbolState = (stateName, target, animationOptions) ->
   @.states["#{stateName}"] =
       backgroundColor: target.states["default"].backgroundColor
       opacity: target.states["default"].opacity
@@ -61,7 +63,7 @@ Layer::addSymbolState = (stateName, target) ->
       skewX: target.states["default"].skewX
       skewY: target.states["default"].skewY
 
-  copyStatesFromTarget(@, target, stateName)
+  copyStatesFromTarget(@, target, stateName, animationOptions)
   target.destroy()
 
 exports.Symbol = (layer, states=false) ->
@@ -129,7 +131,7 @@ exports.Symbol = (layer, states=false) ->
 
       if states
         for state in states
-          @.addSymbolState(state.name, state.template)
+          @.addSymbolState(state.name, state.template, state.animationOptions)
 
       @.on Events.StateSwitchStart, (from, to) ->
         if to is "default" and ((@.states[to].x isnt @.x) or (@.states[to].y isnt @.y))
