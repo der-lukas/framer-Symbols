@@ -10,7 +10,8 @@ Easily create reusable components in Framer, without the hassle of actually writ
 
 **Check out some demos:**
 
-[iOS Control Center](https://framer.cloud/kHTCh/) | [Buttons](https://framer.cloud/qjNTq/) | [Weird, chaotic demo](https://framer.cloud/OEfot/) | [Intro Animation](https://framer.cloud/ZNUgv/)
+[Form Element Symbols](https://framer.cloud/MjZgp) |
+[iOS Control Center](https://framer.cloud/Xlgod/) |  [Buttons](https://framer.cloud/qjNTq/) | [Weird, chaotic demo](https://framer.cloud/OEfot/) | [Intro Animation](https://framer.cloud/ZNUgv/)
 
 ## Installation
 
