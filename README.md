@@ -11,7 +11,7 @@ Easily create reusable components in Framer, without the hassle of actually writ
 **Check out some demos:**
 
 [Form Element Symbols](https://framer.cloud/MjZgp) |
-[iOS Control Center](https://framer.cloud/Xlgod/) |  [Buttons](https://framer.cloud/qjNTq/) | [Weird, chaotic demo](https://framer.cloud/OEfot/) | [Intro Animation](https://framer.cloud/ZNUgv/)
+[iOS Control Center](https://framer.cloud/Xlgod/) | [Intro Animation](https://framer.cloud/ZNUgv/)
 
 ## Installation
 
@@ -138,7 +138,7 @@ buttonInstanceTwo.addSymbolState('specific', button_specific)
 
 ... now `buttonInstanceOne` has the state `default` and `buttonInstanceTwo` has the 2 states `default` and `specific`.
 
-[Try the buttons protoype](https://framer.cloud/qjNTq/)
+[Buttons Prototype](https://framer.cloud/qjNTq/)
 
 ----------
 ## Disclaimer
