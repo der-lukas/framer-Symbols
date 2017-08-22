@@ -1,8 +1,19 @@
 # MODULE IMPORT
-{createSymbol} = require 'Symbol'
+{Symbol} = require 'Symbol'
 
-# BUTTON SYMBOL (needs to be created in Design Mode)
-Button = createSymbol(button)
+# COMMON STATES FOR ALL BUTTON-SYMBOLS
+buttonStates =
+	active:
+		template: button_active
+	disabled:
+		template: button_disabled
+		animationOptions:
+			curve: Spring(damping: 1)
+			time: 0.7
+			
+
+# INITIATE BUTTON SYMBOL
+Button = new Symbol(buttonTemplate)
 
 # CREATE BUTTON INSTANCE
 btn = new Button
@@ -10,9 +21,8 @@ btn = new Button
 	x: Align.center
 	y: Align.center
 
-# ADD BUTTON STATES (need to be created in Design Mode)
-btn.addSymbolState('disabled', button_disabled)
-btn.addSymbolState('active', button_active)
+# ADD A SPECIFIC STATE TO THIS BUTTON-INSTANCE
+btn.addSymbolState('special', button_special)
 
 # APPLY STATE ANIMATION OPTIONS IF NECESSARY
 btn.states.animationOptions =
