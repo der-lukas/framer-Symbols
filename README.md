@@ -13,6 +13,8 @@ Easily create reusable components in Framer, without the hassle of actually writ
 [Form Element Symbols](https://framer.cloud/MjZgp) |
 [iOS Control Center](https://framer.cloud/Xlgod/) | [Intro Animation](https://framer.cloud/ZNUgv/)
 
+*:exclamation: To always load the latest version of the module, these demos use [Marc Krenn's "testDrive"-snippet](https://github.com/marckrenn/framer-testDrive). This causes some flickering and warnings for some seconds, when opening the demos. :exclamation:*
+
 ## Installation
 
 **Step 1** Download and copy `Symbol.coffee` in your project's `/modules`-folder.
@@ -32,7 +34,7 @@ As you can see, the Symbol-class takes two parameters:
 Parameter | Type | Description
 -------- | ---- | -------
 `template` | layer | `required` This is the layer, that will be used as template
-`states` | array | `optional` An array of states, that will be applied to every instance [Read More](#symbol-states)
+`states` | Object | `optional` A states-object, that will be applied to every instance [Read More](#symbol-states)
 
 ##### Example
 Let's create a `Button`-Symbol as an example:
@@ -139,6 +141,29 @@ buttonInstanceTwo.addSymbolState('specific', button_specific)
 ... now `buttonInstanceOne` has the state `default` and `buttonInstanceTwo` has the 2 states `default` and `specific`.
 
 [Buttons Prototype](https://framer.cloud/qjNTq/)
+
+## Working with text
+As usual in Framer, text that is different between instances or changes its content between states, should be declared as `template`.
+
+Text that stays the same for all instances and states, should be a normal `text`.
+
+[Framer Docs for textLayer](https://framer.com/docs/#text.textlayer)
+
+## Under the hood
+
+_For your better understanding and if something shouldn't work as expected, I want to give you a little insight into what the module does._
+
+### tl;dr
+The module basically animates between the `default` states of different layers.
+
+### ...a little more detailed
+The module creates a new layerType that extends `Layer`.
+This layer basically makes a copy of all the layers of the supplied symbol-template.
+
+When you supply templates-layer for a new `symbolState`, the module applies the the target-layers default-state properties as properties for the new state you are creating.
+This happens recursive for all descendants of your symbol, so that every child-layer of a symbol has the same states as the parent.
+
+On `StateSwitchStart`-event of the symbol, the module applies the stateSwitch to all descendants recursively, so that all states stay in sync.
 
 ----------
 ## Disclaimer
