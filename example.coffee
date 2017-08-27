@@ -1,32 +1,28 @@
-# MODULE IMPORT
-{Symbol} = require 'Symbol'
-
-# COMMON STATES FOR ALL BUTTON-SYMBOLS
-buttonStates =
-	active:
-		template: button_active
+# Create common states (optional)
+commonStates =
 	disabled:
 		template: button_disabled
 		animationOptions:
 			curve: Spring(damping: 1)
 			time: 0.7
-			
+	active:
+		template: button_active
+		animationOptions:
+			curve: Bezier.easeInOut
+			time: 1
 
-# INITIATE BUTTON SYMBOL
-Button = new Symbol(buttonTemplate)
+# Initialize your symbol
+# ("button_default" needs to be created either in Design or Code-Mode)
+Button = new Symbol(button_default, commonStates)
 
-# CREATE BUTTON INSTANCE
-btn = new Button
-	parent: home
+# Create instances of your symbol
+buttonInstanceOne = new Button
 	x: Align.center
-	y: Align.center
+	y: 100
 
-# ADD A SPECIFIC STATE TO THIS BUTTON-INSTANCE
-btn.addSymbolState('special', button_special)
-
-# APPLY STATE ANIMATION OPTIONS IF NECESSARY
-btn.states.animationOptions =
-	curve: Spring
+buttonInstanceTwo = new Button
+	x: Align.center
+	y: 200
 
 # CYCLE BETWEEN STATES ON CLICK
 btn.onClick ->
