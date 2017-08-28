@@ -1,3 +1,9 @@
+###
+For this snippet to work, go into Design-Mode and create
+3 buttons called "button_default", "button_disabled" and "button_active"
+– these will get merged into one symbol!
+###
+
 # Create common states (optional)
 commonStates =
 	disabled:
@@ -16,14 +22,10 @@ commonStates =
 Button = new Symbol(button_default, commonStates)
 
 # Create instances of your symbol
-buttonInstanceOne = new Button
+buttonInstance = new Button
 	x: Align.center
 	y: 100
 
-buttonInstanceTwo = new Button
-	x: Align.center
-	y: 200
-
 # CYCLE BETWEEN STATES ON CLICK
-btn.onClick ->
+buttonInstance.onClick ->
 	@.stateCycle()
