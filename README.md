@@ -17,6 +17,15 @@ Easily create reusable components in Framer, without the hassle of actually writ
 
 ## Installation
 
+### Automatic Installation with [Framer Modules](https://www.framermodules.com/)
+
+<a href='https://open.framermodules.com/Symbols'>
+    <img alt='Install with Framer Modules'
+    src='https://www.framermodules.com/assets/badge@2x.png' width='160' height='40' />
+</a>
+
+### Manual Installation
+
 **Step 1** Download and copy `Symbol.coffee` in your project's `/modules`-folder.
 
 **Step 2** Require the `Symbol`-module in your project
