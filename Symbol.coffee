@@ -71,7 +71,7 @@ Layer::addSymbolState = (stateName, target, animationOptions=false) ->
   copyStatesFromTarget(@, target, stateName, animationOptions)
   target.destroy()
 
-exports.Symbol = (layer, states=false) ->
+exports.Symbol = (layer, states=false, events=false) ->
   class Symbol extends Layer
     constructor: (options={}) ->
       options.backgroundColor ?= layer.backgroundColor
@@ -98,6 +98,8 @@ exports.Symbol = (layer, states=false) ->
 
       options.x ?= false
       options.y ?= false
+
+      @_action = options.action ? -> null
 
       super options
 
@@ -137,6 +139,15 @@ exports.Symbol = (layer, states=false) ->
       if states
         for stateName, stateProps of states
           @.addSymbolState(stateName, stateProps.template, stateProps.animationOptions)
+
+      if events
+        for trigger, action of events
+          if _.isFunction(action)
+            @on Events[trigger], action
+          else
+            if @[trigger]
+              for triggerName, actionProps of action
+                @[trigger].on Events[triggerName], actionProps
 
       @.on Events.StateSwitchStart, (from, to) ->
         if to is "default" and ((@.states[to].x isnt @.x) or (@.states[to].y isnt @.y))
