@@ -1,23 +1,18 @@
 copySourceToTarget = (source, target=false) ->
   if source.children.length > 0
     for subLayer in source.descendants
-      if subLayer.__framerInstanceInfo.framerClass == "TextLayer"
-        target[subLayer.name] = new TextLayer
-        target[subLayer.name].textAlign = subLayer.props.styledTextOptions.alignment
-      else if subLayer.__framerInstanceInfo.framerClass == "SVGLayer"
-        target[subLayer.name] = new SVGLayer
-        target[subLayer.name].backgroundColor = null
-        target[subLayer.name].width = null
-        target[subLayer.name].height = null
-
-        target[subLayer.name]._DefinedPropertiesValuesKey = subLayer._DefinedPropertiesValuesKey
-        target[subLayer.name]._element = subLayer._element
-        target[subLayer.name]._elementHTML = subLayer._elementHTML
-      else
-        target[subLayer.name] = new Layer
+      target[subLayer.name] = subLayer.copySingle()
 
       target[subLayer.name].props = subLayer.props
       target[subLayer.name].name = subLayer.name
+
+      if subLayer.__framerInstanceInfo.framerClass == "TextLayer"
+        target[subLayer.name].textAlign = subLayer.props.styledTextOptions.alignment
+
+      if subLayer.__framerInstanceInfo.framerClass == "SVGLayer"
+        target[subLayer.name]._DefinedPropertiesValuesKey = subLayer._DefinedPropertiesValuesKey
+        target[subLayer.name]._element = subLayer._element
+        target[subLayer.name]._elementHTML = subLayer._elementHTML
 
       if subLayer.parent is source
         target[subLayer.name].parent = target
@@ -36,6 +31,16 @@ copyStatesFromTarget = (source, target, stateName, animationOptions=false) ->
     if animationOptions
       subLayer.states["#{stateName}"].animationOptions = animationOptions
 
+Layer::addSymbolState = (stateName, target, animationOptions=false) ->
+  @.states["#{stateName}"] = target.states["default"]
+  @.states["#{stateName}"].x = @.x
+  @.states["#{stateName}"].y = @.y
+
+  if animationOptions
+    @.states["#{stateName}"].animationOptions = animationOptions
+
+  copyStatesFromTarget(@, target, stateName, animationOptions)
+  target.destroy()
 
 Layer::replaceWithSymbol = (symbol) ->
   symbol.point = @.point
@@ -44,32 +49,6 @@ Layer::replaceWithSymbol = (symbol) ->
   for stateName in symbol.stateNames
     symbol.states["#{stateName}"].point = @.point
   @.destroy()
-
-Layer::addSymbolState = (stateName, target, animationOptions=false) ->
-  @.states["#{stateName}"] =
-      backgroundColor: target.states["default"].backgroundColor
-      opacity: target.states["default"].opacity
-      borderWidth: target.states["default"].borderWidth
-      borderColor: target.states["default"].borderColor
-      borderRadius: target.states["default"].borderRadius
-      shadowSpread: target.states["default"].shadowSpread
-      shadowX: target.states["default"].shadowX
-      shadowY: target.states["default"].shadowY
-      shadowBlur: target.states["default"].shadowBlur
-      shadowColor: target.states["default"].shadowColor
-      scale: target.states["default"].scale
-      scaleX: target.states["default"].scaleX
-      scaleY: target.states["default"].scaleY
-      rotation: target.states["default"].rotation
-      rotationX: target.states["default"].rotationX
-      rotationY: target.states["default"].rotationY
-      originX: target.states["default"].originX
-      originY: target.states["default"].originY
-      skewX: target.states["default"].skewX
-      skewY: target.states["default"].skewY
-
-  copyStatesFromTarget(@, target, stateName, animationOptions)
-  target.destroy()
 
 exports.Symbol = (layer, states=false, events=false) ->
   class Symbol extends Layer
@@ -98,8 +77,6 @@ exports.Symbol = (layer, states=false, events=false) ->
 
       options.x ?= false
       options.y ?= false
-
-      @_action = options.action ? -> null
 
       super options
 
@@ -134,6 +111,9 @@ exports.Symbol = (layer, states=false, events=false) ->
 
       @.customProps = options.customProps
 
+      @.states['default'].x = @.x
+      @.states['default'].y = @.y
+
       copySourceToTarget(layer, @)
 
       if states
@@ -151,22 +131,22 @@ exports.Symbol = (layer, states=false, events=false) ->
                 if Events[triggerName]
                   @[trigger].on Events[triggerName], actionProps
 
-      @.on Events.StateSwitchStart, (from, to) ->
-        if to is "default" and ((@.states[to].x isnt @.x) or (@.states[to].y isnt @.y))
-          @.states[to].x = @.x
-          @.states[to].y = @.y
-        # for stateName in @.stateNames
-        #   @.states["#{stateName}"].x = @.x
-        #   @.states["#{stateName}"].y = @.y
+      # Reset position for each state to position defined in options
+      for stateName in @.stateNames
+        @.states["#{stateName}"].x = options.x
+        @.states["#{stateName}"].y = options.y
 
+      @.on Events.StateSwitchStart, (from, to) ->
         for child in @.descendants
           if child.constructor.name == "TextLayer"
             child.states[to].text = child.text
+            child.states[to].textAlign = child.props.styledTextOptions.alignment
             child.states[to].width = child.width
             child.states[to].height = child.height
 
             if Object.keys(child.template).length > 0
               child.states[to].template = child.template
+
           else
             if child.image && (child.states[to].image != child.image)
               child.states[to].image = child.image
