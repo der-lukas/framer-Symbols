@@ -2,17 +2,7 @@ copySourceToTarget = (source, target=false) ->
   if source.children.length > 0
     for subLayer in source.descendants
       target[subLayer.name] = subLayer.copySingle()
-
-      target[subLayer.name].props = subLayer.props
       target[subLayer.name].name = subLayer.name
-
-      if subLayer.__framerInstanceInfo.framerClass == "TextLayer"
-        target[subLayer.name].textAlign = subLayer.props.styledTextOptions.alignment
-
-      if subLayer.__framerInstanceInfo.framerClass == "SVGLayer"
-        target[subLayer.name]._DefinedPropertiesValuesKey = subLayer._DefinedPropertiesValuesKey
-        target[subLayer.name]._element = subLayer._element
-        target[subLayer.name]._elementHTML = subLayer._elementHTML
 
       if subLayer.parent is source
         target[subLayer.name].parent = target
@@ -32,9 +22,27 @@ copyStatesFromTarget = (source, target, stateName, animationOptions=false) ->
       subLayer.states["#{stateName}"].animationOptions = animationOptions
 
 Layer::addSymbolState = (stateName, target, animationOptions=false) ->
-  @.states["#{stateName}"] = target.states["default"]
-  @.states["#{stateName}"].x = @.x
-  @.states["#{stateName}"].y = @.y
+  @.states["#{stateName}"] =
+      backgroundColor: target.states["default"].backgroundColor
+      opacity: target.states["default"].opacity
+      borderWidth: target.states["default"].borderWidth
+      borderColor: target.states["default"].borderColor
+      borderRadius: target.states["default"].borderRadius
+      shadowSpread: target.states["default"].shadowSpread
+      shadowX: target.states["default"].shadowX
+      shadowY: target.states["default"].shadowY
+      shadowBlur: target.states["default"].shadowBlur
+      shadowColor: target.states["default"].shadowColor
+      scale: target.states["default"].scale
+      scaleX: target.states["default"].scaleX
+      scaleY: target.states["default"].scaleY
+      rotation: target.states["default"].rotation
+      rotationX: target.states["default"].rotationX
+      rotationY: target.states["default"].rotationY
+      originX: target.states["default"].originX
+      originY: target.states["default"].originY
+      skewX: target.states["default"].skewX
+      skewY: target.states["default"].skewY
 
   if animationOptions
     @.states["#{stateName}"].animationOptions = animationOptions
@@ -130,11 +138,6 @@ exports.Symbol = (layer, states=false, events=false) ->
               for triggerName, actionProps of action
                 if Events[triggerName]
                   @[trigger].on Events[triggerName], actionProps
-
-      # Reset position for each state to position defined in options
-      for stateName in @.stateNames
-        @.states["#{stateName}"].x = options.x
-        @.states["#{stateName}"].y = options.y
 
       @.on Events.StateSwitchStart, (from, to) ->
         for child in @.descendants
