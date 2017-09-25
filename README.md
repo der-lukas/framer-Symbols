@@ -11,7 +11,7 @@ Easily create reusable components in Framer, without the hassle of actually writ
 **Check out some demos:**
 
 [Form Element Symbols](https://framer.cloud/MjZgp) |
-[iOS Control Center](https://framer.cloud/Xlgod/) | [Intro Animation](https://framer.cloud/ZNUgv/)
+[iOS Control Center](https://framer.cloud/Xlgod/) | [Intro Animation](https://framer.cloud/ZNUgv/) | [Common Event Buttons](https://framer.cloud/IpDbI)
 
 *:exclamation: To always load the latest version of the module, these demos use [Marc Krenn's "testDrive"-snippet](https://github.com/marckrenn/framer-testDrive). This causes some flickering and warnings for some seconds, when opening the demos. :exclamation:*
 
@@ -36,7 +36,7 @@ Easily create reusable components in Framer, without the hassle of actually writ
 
 ### Create a new Symbol
 
-`SymbolName = new Symbol(template, states)`
+`SymbolName = new Symbol(template, states, events)`
 
 As you can see, the Symbol-class takes two parameters:
 
@@ -44,6 +44,7 @@ Parameter | Type | Description
 -------- | ---- | -------
 `template` | layer | `required` This is the layer, that will be used as template
 `states` | Object | `optional` A states-object, that will be applied to every instance [Read More](#symbol-states)
+`events` | Object | `optional` An events-object, that will be applied to every instance [Read More](#symbol-events)
 
 ##### Example
 Let's create a `Button`-Symbol as an example:
@@ -150,6 +151,47 @@ buttonInstanceTwo.addSymbolState('specific', button_specific)
 ... now `buttonInstanceOne` has the state `default` and `buttonInstanceTwo` has the 2 states `default` and `specific`.
 
 [Buttons Prototype](https://framer.cloud/qjNTq/)
+
+## Symbol Events
+You can apply common events to **ALL** symbol-instances.
+They are being applied on initialization of the Symbol.
+
+Define the commonStates-object like so:
+
+```coffeescript
+commonEventsObject =
+	eventName: -> yourEvent
+```
+
+You can also supply events to descendant-layers of your symbol, like so:
+
+```coffeescript
+commonEventsObject =
+	eventName: -> yourEvent
+	descendantName:
+  	eventName: -> yourEvent
+```
+
+##### Example
+```coffeescript
+...
+
+# Create common events
+commonEvents =
+  MouseOver: -> @.animate "hover"
+  MouseOut: -> @.animate "default"
+  TapStart: -> @.animate "active"
+  TapEnd: -> @.animate "hover"
+  descendantName:
+    Tap: -> print "Foo"
+
+# Initialize your symbol
+Button = new Symbol(button_default, commonStates, commonEvents)
+
+...
+```
+
+Check out [this demo](https://framer.cloud/IpDbI) or visit the [Framer Docs for Events](https://framer.com/docs/#events.events)
 
 ## Working with text
 As usual in Framer, text that is different between instances or changes its content between states, should be declared as `template`.
