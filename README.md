@@ -160,16 +160,16 @@ Define the commonStates-object like so:
 
 ```coffeescript
 commonEventsObject =
-	eventName: -> yourEvent
+  eventName: -> yourEvent
 ```
 
 You can also supply events to descendant-layers of your symbol, like so:
 
 ```coffeescript
 commonEventsObject =
-	eventName: -> yourEvent
-	descendantName:
-  	eventName: -> yourEvent
+  eventName: -> yourEvent
+  descendantName:
+    eventName: -> yourEvent
 ```
 
 ##### Example
