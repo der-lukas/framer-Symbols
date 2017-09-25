@@ -58,9 +58,9 @@ Button = new Symbol(button_default)
 
 # Create buttonInstance
 buttonInstance = new Button
-	x: Align.center
-	y: Align.center
-	...
+  x: Align.center
+  y: Align.center
+  ...
 ```
 
 ... now you have your `Button`-symbol ready to use and you can go back in **Design-Mode**, edit away and the changes will reflect in all of your instances in Code!
@@ -91,31 +91,31 @@ Property | Type | Description
 
 # Create common states
 commonStates =
-	disabled:
-		template: button_disabled
-		animationOptions:
-			curve: Spring(damping: 1)
-			time: 0.7
-	active:
-		template: button_active
-		animationOptions:
-			curve: Bezier.easeInOut
-			time: 1
+  disabled:
+    template: button_disabled
+    animationOptions:
+      curve: Spring(damping: 1)
+      time: 0.7
+  active:
+    template: button_active
+    animationOptions:
+      curve: Bezier.easeInOut
+      time: 1
 
 # Initialize your symbol
 Button = new Symbol(button_default, commonStates)
 
 # Create buttonInstanceOne
 buttonInstanceOne = new Button
-	x: Align.center
-	y: 100
-	...
+  x: Align.center
+  y: 100
+  ...
 
 # Create buttonInstanceTwo
 buttonInstanceTwo = new Button
-	x: Align.center
-	y: 200
-	...
+  x: Align.center
+  y: 200
+  ...
 ```
 
 ... now both `buttonInstanceOne` and `buttonInstanceTwo` have the 3 states `default, disabled` and `active`.
@@ -135,15 +135,15 @@ Button = new Symbol(button_default, commonStates)
 
 # Create buttonInstanceOne
 buttonInstanceOne = new Button
-	x: Align.center
+  x: Align.center
 	y: 100
-	...
+  ...
 
 # Create buttonInstanceTwo
 buttonInstanceTwo = new Button
-	x: Align.center
-	y: 200
-	...
+  x: Align.center
+  y: 200
+  ...
 
 buttonInstanceTwo.addSymbolState('specific', button_specific)
 ```
@@ -231,8 +231,9 @@ The code is based on the earlier exploration of [Andreas Wahlström's createClas
 - [x] Add textLayer animations
 - [x] Add SVGLayer support
 - [x] Fix layer-nesting
-- [x] Common / Reusable Symbol states
-- [ ] Improve README
+- [x] Common Symbol states
+- [x] Common Symbol events
+- [x] Improve README
 - [ ] Discover support for reuse in other projects
 - [ ] Discover nested symbols
 
