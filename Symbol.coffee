@@ -147,7 +147,7 @@ exports.Symbol = (layer, states=false, events=false) ->
             child.states[to].width = child.width
             child.states[to].height = child.height
 
-            if Object.keys(child.template).length > 0
+            if child.template && Object.keys(child.template).length > 0
               child.states[to].template = child.template
 
           else
