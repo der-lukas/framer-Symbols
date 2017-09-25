@@ -136,7 +136,7 @@ Button = new Symbol(button_default, commonStates)
 # Create buttonInstanceOne
 buttonInstanceOne = new Button
   x: Align.center
-	y: 100
+  y: 100
   ...
 
 # Create buttonInstanceTwo
