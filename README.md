@@ -38,7 +38,7 @@ Easily create reusable components in Framer, without the hassle of actually writ
 
 `SymbolName = new Symbol(template, states, events)`
 
-As you can see, the Symbol-class takes two parameters:
+The Symbol-class has the following parameters:
 
 Parameter | Type | Description
 -------- | ---- | -------
