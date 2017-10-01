@@ -23,26 +23,64 @@ copyStatesFromTarget = (source, target, stateName, animationOptions=false) ->
 
 Layer::addSymbolState = (stateName, target, animationOptions=false) ->
   @.states["#{stateName}"] =
-      backgroundColor: target.states["default"].backgroundColor
+      width: target.states["default"].width
+      height: target.states["default"].height
+      visible: target.states["default"].visible
       opacity: target.states["default"].opacity
-      borderWidth: target.states["default"].borderWidth
-      borderColor: target.states["default"].borderColor
-      borderRadius: target.states["default"].borderRadius
-      shadowSpread: target.states["default"].shadowSpread
-      shadowX: target.states["default"].shadowX
-      shadowY: target.states["default"].shadowY
-      shadowBlur: target.states["default"].shadowBlur
-      shadowColor: target.states["default"].shadowColor
-      scale: target.states["default"].scale
+      clip: target.states["default"].clip
+      scrollHorizontal: target.states["default"].scrollHorizontal
+      scrollVertical: target.states["default"].scrollVertical
+      scroll: target.states["default"].scroll
       scaleX: target.states["default"].scaleX
       scaleY: target.states["default"].scaleY
-      rotation: target.states["default"].rotation
-      rotationX: target.states["default"].rotationX
-      rotationY: target.states["default"].rotationY
-      originX: target.states["default"].originX
-      originY: target.states["default"].originY
+      scaleZ: target.states["default"].scaleZ
+      scale: target.states["default"].scale
       skewX: target.states["default"].skewX
       skewY: target.states["default"].skewY
+      skew: target.states["default"].skew
+      originX: target.states["default"].originX
+      originY: target.states["default"].originY
+      originZ: target.states["default"].originZ
+      perspective: target.states["default"].perspective
+      perspectiveOriginX: target.states["default"].perspectiveOriginX
+      perspectiveOriginY: target.states["default"].perspectiveOriginY
+      rotationX: target.states["default"].rotationX
+      rotationY: target.states["default"].rotationY
+      rotationZ: target.states["default"].rotationZ
+      rotation: target.states["default"].rotation
+      blur: target.states["default"].blur
+      brightness: target.states["default"].brightness
+      saturate: target.states["default"].saturate
+      hueRotate: target.states["default"].hueRotate
+      contrast: target.states["default"].contrast
+      invert: target.states["default"].invert
+      grayscale: target.states["default"].grayscale
+      sepia: target.states["default"].sepia
+      blending: target.states["default"].blending
+      backgroundBlur: target.states["default"].backgroundBlur
+      backgroundBrightness: target.states["default"].backgroundBrightness
+      backgroundSaturate: target.states["default"].backgroundSaturate
+      backgroundHueRotate: target.states["default"].backgroundHueRotate
+      backgroundContrast: target.states["default"].backgroundContrast
+      backgroundInvert: target.states["default"].backgroundInvert
+      backgroundGrayscale: target.states["default"].backgroundGrayscale
+      backgroundSepia: target.states["default"].backgroundSepia
+      shadows: target.states["default"].shadows
+      backgroundColor: target.states["default"].backgroundColor
+      color: target.states["default"].color
+      borderRadius: target.states["default"].borderRadius
+      borderColor: target.states["default"].borderColor
+      borderWidth: target.states["default"].borderWidth
+      borderStyle: target.states["default"].borderStyle
+      force2d: target.states["default"].force2d
+      flat: target.states["default"].flat
+      backfaceVisible: target.states["default"].backfaceVisible
+      htmlIntrinsicSize: target.states["default"].htmlIntrinsicSize
+      html: target.states["default"].html
+      image: target.states["default"].image
+      gradient: target.states["default"].gradient
+      scrollX: target.states["default"].scrollX
+      scrollY: target.states["default"].scrollY
 
   if animationOptions
     @.states["#{stateName}"].animationOptions = animationOptions
@@ -60,64 +98,75 @@ Layer::replaceWithSymbol = (symbol) ->
 
 exports.Symbol = (layer, states=false, events=false) ->
   class Symbol extends Layer
-    constructor: (options={}) ->
-      options.backgroundColor ?= layer.backgroundColor
-      options.image ?= layer.image
-      options.opacity ?= layer.props.opacity
-      options.borderWidth ?= layer.props.borderWidth
-      options.borderColor ?= layer.props.borderColor
-      options.borderRadius ?= layer.props.borderRadius
-      options.shadowSpread ?= layer.props.shadowSpread
-      options.shadowX ?= layer.props.shadowX
-      options.shadowY ?= layer.props.shadowY
-      options.shadowBlur ?= layer.props.shadowBlur
-      options.shadowColor ?= layer.props.shadowColor
-      options.scale ?= layer.props.scale
-      options.scaleX ?= layer.props.scaleX
-      options.scaleY ?= layer.props.scaleY
-      options.rotation ?= layer.props.rotation
-      options.rotationX ?= layer.props.rotationX
-      options.rotationY ?= layer.props.rotationY
-      options.originX ?= layer.props.originX
-      options.originY ?= layer.props.originY
-      options.skewX ?= layer.props.skewX
-      options.skewY ?= layer.props.skewY
+    constructor: (@options={}) ->
+      @options.width ?= layer.width
+      @options.height ?= layer.height
+      @options.visible ?= layer.visible
+      @options.opacity ?= layer.opacity
+      @options.clip ?= layer.clip
+      @options.scrollHorizontal ?= layer.scrollHorizontal
+      @options.scrollVertical ?= layer.scrollVertical
+      @options.scroll ?= layer.scroll
+      @options.x ?= layer.x
+      @options.y ?= layer.y
+      @options.z ?= layer.z
+      @options.scaleX ?= layer.scaleX
+      @options.scaleY ?= layer.scaleY
+      @options.scaleZ ?= layer.scaleZ
+      @options.scale ?= layer.scale
+      @options.skewX ?= layer.skewX
+      @options.skewY ?= layer.skewY
+      @options.skew ?= layer.skew
+      @options.originX ?= layer.originX
+      @options.originY ?= layer.originY
+      @options.originZ ?= layer.originZ
+      @options.perspective ?= layer.perspective
+      @options.perspectiveOriginX ?= layer.perspectiveOriginX
+      @options.perspectiveOriginY ?= layer.perspectiveOriginY
+      @options.rotationX ?= layer.rotationX
+      @options.rotationY ?= layer.rotationY
+      @options.rotationZ ?= layer.rotationZ
+      @options.rotation ?= layer.rotation
+      @options.blur ?= layer.blur
+      @options.brightness ?= layer.brightness
+      @options.saturate ?= layer.saturate
+      @options.hueRotate ?= layer.hueRotate
+      @options.contrast ?= layer.contrast
+      @options.invert ?= layer.invert
+      @options.grayscale ?= layer.grayscale
+      @options.sepia ?= layer.sepia
+      @options.blending ?= layer.blending
+      @options.backgroundBlur ?= layer.backgroundBlur
+      @options.backgroundBrightness ?= layer.backgroundBrightness
+      @options.backgroundSaturate ?= layer.backgroundSaturate
+      @options.backgroundHueRotate ?= layer.backgroundHueRotate
+      @options.backgroundContrast ?= layer.backgroundContrast
+      @options.backgroundInvert ?= layer.backgroundInvert
+      @options.backgroundGrayscale ?= layer.backgroundGrayscale
+      @options.backgroundSepia ?= layer.backgroundSepia
+      @options.shadows ?= layer.shadows
+      @options.backgroundColor ?= layer.backgroundColor
+      @options.color ?= layer.color
+      @options.borderRadius ?= layer.borderRadius
+      @options.borderColor ?= layer.borderColor
+      @options.borderWidth ?= layer.borderWidth
+      @options.borderStyle ?= layer.borderStyle
+      @options.force2d ?= layer.force2d
+      @options.flat ?= layer.flat
+      @options.backfaceVisible ?= layer.backfaceVisible
+      @options.htmlIntrinsicSize ?= layer.htmlIntrinsicSize
+      @options.html ?= layer.html
+      @options.image ?= layer.image
+      @options.gradient ?= layer.gradient
+      @options.scrollX ?= layer.scrollX
+      @options.scrollY ?= layer.scrollY
 
-      options.x ?= false
-      options.y ?= false
+      @options.x ?= false
+      @options.y ?= false
 
-      super options
+      super @options
 
-      @.props = layer.props
-
-      @.name = options.name
-      @.size = options.size
-      @.image = options.image
-      @.backgroundColor = options.backgroundColor
-      @.opacity = options.opacity
-      @.borderWidth = options.borderWidth
-      @.borderColor = options.borderColor
-      @.borderRadius = options.borderRadius
-      @.shadowSpread = options.shadowSpread
-      @.shadowX = options.shadowX
-      @.shadowY = options.shadowY
-      @.shadowBlur = options.shadowBlur
-      @.shadowColor = options.shadowColor
-      @.scale = options.scale
-      @.scaleX = options.scaleX
-      @.scaleY = options.scaleY
-      @.rotation = options.rotation
-      @.rotationX = options.rotationX
-      @.rotationY = options.rotationY
-      @.originX = options.originX
-      @.originY = options.originY
-      @.skewX = options.skewX
-      @.skewY = options.skewY
-
-      @.x = options.x
-      @.y = options.y
-
-      @.customProps = options.customProps
+      @.customProps = @options.customProps
 
       @.states['default'].x = @.x
       @.states['default'].y = @.y
