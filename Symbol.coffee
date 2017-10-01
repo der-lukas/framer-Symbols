@@ -208,4 +208,4 @@ exports.Symbol = (layer, states=false, events=false) ->
     layer.destroy()
 
 # A backup for the deprecated way of calling the class
-exports.createSymbol = (layer, states) -> exports.Symbol(layer, states)
+exports.createSymbol = (layer, states, events) -> exports.Symbol(layer, states, events)
