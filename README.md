@@ -216,6 +216,10 @@ This happens recursive for all descendants of your symbol, so that every child-l
 
 On `StateSwitchStart`-event of the symbol, the module applies the stateSwitch to all descendants recursively, so that all states stay in sync.
 
+## Tutorials
+Chris Slowik [(@chrislowik)](https://twitter.com/chrisslowik) created two awesome tutorials on designers.how, check them out here:
+https://designers.how/episodes/design-based-symbols-in-framer
+
 ----------
 ## Disclaimer
 This module is still very experimental and will probably sooner than later be unnecessary, because the beautiful people at Framer will make a proper implementation for something like this.
