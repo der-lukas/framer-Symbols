@@ -90,8 +90,11 @@ Layer::addSymbolState = (stateName, target, animationOptions=false) ->
   target.destroy()
 
 Layer::replaceWithSymbol = (symbol) ->
-  symbol.point = @.point
   symbol.parent = @.parent
+  symbol.point = @.point
+
+  symbol.states['default'].x = symbol.x
+  symbol.states['default'].y = symbol.y
 
   for stateName in symbol.stateNames
     symbol.states["#{stateName}"].point = @.point
