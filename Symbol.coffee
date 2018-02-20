@@ -22,7 +22,8 @@ copyStatesFromTarget = (source, target, stateName, animationOptions=false) ->
       subLayer.states["#{stateName}"].animationOptions = animationOptions
 
 Layer::addSymbolState = (stateName, target, animationOptions=false) ->
-  @.states["#{stateName}"] =
+  if stateName isnt "default"
+    @.states["#{stateName}"] =
       width: target.states["default"].width
       height: target.states["default"].height
       visible: target.states["default"].visible
@@ -99,77 +100,9 @@ Layer::replaceWithSymbol = (symbol) ->
 exports.Symbol = (layer, states=false, events=false) ->
   class Symbol extends Layer
     constructor: (@options={}) ->
-      @options.width ?= layer.width
-      @options.height ?= layer.height
-      @options.visible ?= layer.visible
-      @options.opacity ?= layer.opacity
-      @options.clip ?= layer.clip
-      @options.scrollHorizontal ?= layer.scrollHorizontal
-      @options.scrollVertical ?= layer.scrollVertical
-      @options.scroll ?= layer.scroll
-      @options.x ?= layer.x
-      @options.y ?= layer.y
-      @options.z ?= layer.z
-      @options.scaleX ?= layer.scaleX
-      @options.scaleY ?= layer.scaleY
-      @options.scaleZ ?= layer.scaleZ
-      @options.scale ?= layer.scale
-      @options.skewX ?= layer.skewX
-      @options.skewY ?= layer.skewY
-      @options.skew ?= layer.skew
-      @options.originX ?= layer.originX
-      @options.originY ?= layer.originY
-      @options.originZ ?= layer.originZ
-      @options.perspective ?= layer.perspective
-      @options.perspectiveOriginX ?= layer.perspectiveOriginX
-      @options.perspectiveOriginY ?= layer.perspectiveOriginY
-      @options.rotationX ?= layer.rotationX
-      @options.rotationY ?= layer.rotationY
-      @options.rotationZ ?= layer.rotationZ
-      @options.rotation ?= layer.rotation
-      @options.blur ?= layer.blur
-      @options.brightness ?= layer.brightness
-      @options.saturate ?= layer.saturate
-      @options.hueRotate ?= layer.hueRotate
-      @options.contrast ?= layer.contrast
-      @options.invert ?= layer.invert
-      @options.grayscale ?= layer.grayscale
-      @options.sepia ?= layer.sepia
-      @options.blending ?= layer.blending
-      @options.backgroundBlur ?= layer.backgroundBlur
-      @options.backgroundBrightness ?= layer.backgroundBrightness
-      @options.backgroundSaturate ?= layer.backgroundSaturate
-      @options.backgroundHueRotate ?= layer.backgroundHueRotate
-      @options.backgroundContrast ?= layer.backgroundContrast
-      @options.backgroundInvert ?= layer.backgroundInvert
-      @options.backgroundGrayscale ?= layer.backgroundGrayscale
-      @options.backgroundSepia ?= layer.backgroundSepia
-      @options.shadows ?= layer.shadows
-      @options.backgroundColor ?= layer.backgroundColor
-      @options.color ?= layer.color
-      @options.borderRadius ?= layer.borderRadius
-      @options.borderColor ?= layer.borderColor
-      @options.borderWidth ?= layer.borderWidth
-      @options.borderStyle ?= layer.borderStyle
-      @options.force2d ?= layer.force2d
-      @options.flat ?= layer.flat
-      @options.backfaceVisible ?= layer.backfaceVisible
-      @options.htmlIntrinsicSize ?= layer.htmlIntrinsicSize
-      @options.html ?= layer.html
-      @options.image ?= layer.image
-      @options.gradient ?= layer.gradient
-      @options.scrollX ?= layer.scrollX
-      @options.scrollY ?= layer.scrollY
-
-      @options.x ?= false
-      @options.y ?= false
-
-      super @options
+      super _.defaults @options, layer.props
 
       @.customProps = @options.customProps
-
-      @.states['default'].x = @.x
-      @.states['default'].y = @.y
 
       copySourceToTarget(layer, @)
 
