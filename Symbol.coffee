@@ -1,13 +1,23 @@
 copySourceToTarget = (source, target=false) ->
   if source.children.length > 0
     for subLayer in source.descendants
-      target[subLayer.name] = subLayer.copySingle()
+      if subLayer.constructor.name is "SVGLayer"
+        target[subLayer.name] = subLayer.copy()
+      else if subLayer.constructor.name is "SVGPath" or subLayer.constructor.name is "SVGGroup"
+        target[subLayer.name] = subLayer._svgLayer.copy()
+      else
+        target[subLayer.name] = subLayer.copySingle()
+
       target[subLayer.name].name = subLayer.name
 
       if subLayer.parent is source
         target[subLayer.name].parent = target
       else
         target[subLayer.name].parent = target[subLayer.parent.name]
+
+      if target[subLayer.name].constructor.name isnt "SVGLayer"
+        target[subLayer.name].constraintValues = subLayer.constraintValues
+        target[subLayer.name].layout()
 
 copyStatesFromTarget = (source, target, stateName, animationOptions=false) ->
   targets = []
@@ -16,6 +26,10 @@ copyStatesFromTarget = (source, target, stateName, animationOptions=false) ->
     targets[layer.name] = layer
 
   for subLayer in source.descendants
+
+    if subLayer.constructor.name is "SVGPath" or subLayer.constructor.name is "SVGGroup"
+      subLayer._svgLayer.states["#{stateName}"] = targets[subLayer.name]._svgLayer.states["default"]
+
     subLayer.states["#{stateName}"] = targets[subLayer.name].states["default"]
 
     if animationOptions
@@ -123,6 +137,10 @@ exports.Symbol = (layer, states=false, events=false) ->
               for triggerName, actionProps of action
                 if Events[triggerName]
                   @[trigger].on Events[triggerName], actionProps
+
+      # Prevent weird glitches by switching to "default" state directly
+      for child in @.descendants
+        child.stateSwitch "default"
 
       @.on Events.StateSwitchStart, (from, to) ->
         for child in @.descendants
