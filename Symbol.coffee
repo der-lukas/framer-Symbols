@@ -37,65 +37,8 @@ copyStatesFromTarget = (source, target, stateName, animationOptions=false) ->
 
 Layer::addSymbolState = (stateName, target, animationOptions=false) ->
   if stateName isnt "default"
-    @.states["#{stateName}"] =
-      width: target.states["default"].width
-      height: target.states["default"].height
-      visible: target.states["default"].visible
-      opacity: target.states["default"].opacity
-      clip: target.states["default"].clip
-      scrollHorizontal: target.states["default"].scrollHorizontal
-      scrollVertical: target.states["default"].scrollVertical
-      scroll: target.states["default"].scroll
-      scaleX: target.states["default"].scaleX
-      scaleY: target.states["default"].scaleY
-      scaleZ: target.states["default"].scaleZ
-      scale: target.states["default"].scale
-      skewX: target.states["default"].skewX
-      skewY: target.states["default"].skewY
-      skew: target.states["default"].skew
-      originX: target.states["default"].originX
-      originY: target.states["default"].originY
-      originZ: target.states["default"].originZ
-      perspective: target.states["default"].perspective
-      perspectiveOriginX: target.states["default"].perspectiveOriginX
-      perspectiveOriginY: target.states["default"].perspectiveOriginY
-      rotationX: target.states["default"].rotationX
-      rotationY: target.states["default"].rotationY
-      rotationZ: target.states["default"].rotationZ
-      rotation: target.states["default"].rotation
-      blur: target.states["default"].blur
-      brightness: target.states["default"].brightness
-      saturate: target.states["default"].saturate
-      hueRotate: target.states["default"].hueRotate
-      contrast: target.states["default"].contrast
-      invert: target.states["default"].invert
-      grayscale: target.states["default"].grayscale
-      sepia: target.states["default"].sepia
-      blending: target.states["default"].blending
-      backgroundBlur: target.states["default"].backgroundBlur
-      backgroundBrightness: target.states["default"].backgroundBrightness
-      backgroundSaturate: target.states["default"].backgroundSaturate
-      backgroundHueRotate: target.states["default"].backgroundHueRotate
-      backgroundContrast: target.states["default"].backgroundContrast
-      backgroundInvert: target.states["default"].backgroundInvert
-      backgroundGrayscale: target.states["default"].backgroundGrayscale
-      backgroundSepia: target.states["default"].backgroundSepia
-      shadows: target.states["default"].shadows
-      backgroundColor: target.states["default"].backgroundColor
-      color: target.states["default"].color
-      borderRadius: target.states["default"].borderRadius
-      borderColor: target.states["default"].borderColor
-      borderWidth: target.states["default"].borderWidth
-      borderStyle: target.states["default"].borderStyle
-      force2d: target.states["default"].force2d
-      flat: target.states["default"].flat
-      backfaceVisible: target.states["default"].backfaceVisible
-      htmlIntrinsicSize: target.states["default"].htmlIntrinsicSize
-      html: target.states["default"].html
-      image: target.states["default"].image
-      gradient: target.states["default"].gradient
-      scrollX: target.states["default"].scrollX
-      scrollY: target.states["default"].scrollY
+    delete target.states.default[prop] for prop in ['x', 'y']
+    @.states["#{stateName}"] = target.states.default
 
   if animationOptions
     @.states["#{stateName}"].animationOptions = animationOptions
@@ -119,9 +62,21 @@ exports.Symbol = (layer, states=false, events=false) ->
     constructor: (@options={}) ->
       super _.defaults @options, layer.props
 
+      for child in layer.descendants
+        @[child.name] = child
+
+        for key, props of @options
+          if key is child.name
+            for prop, value of props
+              @[key][prop] = value
+
+      # delete @.states.default[prop] for prop in ['x', 'y']
+
       @.customProps = @options.customProps
 
       copySourceToTarget(layer, @)
+
+      @.addSymbolState('default', layer, false)
 
       if states
         for stateName, stateProps of states
