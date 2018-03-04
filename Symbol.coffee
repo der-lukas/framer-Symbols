@@ -47,6 +47,10 @@ copyStatesFromTarget = (source, target, stateName, animationOptions = false) ->
     if animationOptions
       subLayer.states["#{stateName}"].animationOptions = animationOptions
 
+      # Also add the animationOptions to the "parent" SVGLayer of a SVGPath or SVGGroup
+      if subLayer.constructor.name is "SVGPath" or subLayer.constructor.name is "SVGGroup"
+        subLayer._svgLayer.states["#{stateName}"].animationOptions = animationOptions
+
 Layer::addSymbolState = (stateName, target, animationOptions = false) ->
   if stateName isnt "default"
     delete target.states.default[prop] for prop in ['x', 'y']
