@@ -65,8 +65,10 @@ Layer::replaceWithSymbol = (symbol) ->
   symbol.parent = @.parent
   symbol.x = @.x
   symbol.y = @.y
-  symbol.states.default.x = @.x
-  symbol.states.default.y = @.y
+
+  for stateName in symbol.stateNames
+    symbol.states["#{stateName}"].x = @.x
+    symbol.states["#{stateName}"].y = @.y
 
   @.destroy()
 
