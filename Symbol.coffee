@@ -65,10 +65,8 @@ Layer::replaceWithSymbol = (symbol) ->
   symbol.parent = @.parent
   symbol.x = @.x
   symbol.y = @.y
-
-  for stateName in symbol.stateNames
-    symbol.states["#{stateName}"].x = @.x
-    symbol.states["#{stateName}"].y = @.y
+  symbol.states.default.x = @.x
+  symbol.states.default.y = @.y
 
   @.destroy()
 
@@ -95,12 +93,22 @@ exports.Symbol = (layer, states = false, events = false) ->
 
       if states
         for stateName, stateProps of states
+
           if stateName is "animationOptions"
             @.animationOptions = stateProps
             for descendant in @.descendants
               descendant.animationOptions = @.animationOptions
           else
-            @.addSymbolState(stateName, stateProps.template, stateProps.animationOptions)
+            if !stateProps.template
+              throw "Error: You need to supply a template-layer for each state."
+            else
+              @.addSymbolState(stateName, stateProps.template, stateProps.animationOptions)
+
+          # Change the x,y position of a symbol inside commonStates
+          if typeof stateProps.x != 'undefined'
+            @.states["#{stateName}"].x = stateProps.x
+          if typeof stateProps.y != 'undefined'
+            @.states["#{stateName}"].y = stateProps.y
 
       if events
         for trigger, action of events
