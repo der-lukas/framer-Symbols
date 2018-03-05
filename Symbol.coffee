@@ -95,7 +95,12 @@ exports.Symbol = (layer, states = false, events = false) ->
 
       if states
         for stateName, stateProps of states
-          @.addSymbolState(stateName, stateProps.template, stateProps.animationOptions)
+          if stateName is "animationOptions"
+            @.animationOptions = stateProps
+            for descendant in @.descendants
+              descendant.animationOptions = @.animationOptions
+          else
+            @.addSymbolState(stateName, stateProps.template, stateProps.animationOptions)
 
       if events
         for trigger, action of events
@@ -129,12 +134,14 @@ exports.Symbol = (layer, states = false, events = false) ->
 
           child.animate to
 
-    # Destroy template layers
+    # Destroy default template layer
     layer.destroy()
 
+    # Destroy state template layers
     if states
       for stateName, stateProps of states
-        stateProps.template.destroy()
+        if stateProps.template
+          stateProps.template.destroy()
 
 # A backup for the deprecated way of calling the class
 exports.createSymbol = (layer, states, events) -> exports.Symbol(layer, states, events)
