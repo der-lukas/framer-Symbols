@@ -29,6 +29,9 @@ copySourceToTarget = (source, target = false) ->
         target[subLayer.name].constraintValues = subLayer.constraintValues
         target[subLayer.name].layout()
 
+      # Create reference to the symbol instance
+      target[subLayer.name]._instance = target
+
 copyStatesFromTarget = (source, target, stateName, animationOptions = false) ->
   targets = []
 
@@ -85,8 +88,6 @@ exports.Symbol = (layer, states = false, events = false) ->
             for prop, value of props
               @[key][prop] = value
 
-      # delete @.states.default[prop] for prop in ['x', 'y']
-
       @.customProps = @options.customProps
 
       copySourceToTarget(layer, @)
@@ -123,10 +124,12 @@ exports.Symbol = (layer, states = false, events = false) ->
                 if Events[triggerName]
                   @[trigger].on Events[triggerName], actionProps
 
-      # Prevent weird glitches by switching to "default" state directly
+      # Prevent weird glitches by switching SVGs to "default" state directly
       for child in @.descendants
-        child.stateSwitch "default"
+        if child.constructor.name is "SVGLayer" or child.constructor.name is "SVGPath" or child.constructor.name is "SVGGroup"
+          child.stateSwitch "default"
 
+      # Handle the stateSwitch for all descendants
       @.on Events.StateSwitchStart, (from, to) ->
         for child in @.descendants
           if child.constructor.name == "TextLayer"
@@ -142,6 +145,7 @@ exports.Symbol = (layer, states = false, events = false) ->
             if child.image && (child.states[to].image != child.image)
               child.states[to].image = child.image
 
+          # Kickstart the stateSwitch
           child.animate to
 
     # Destroy default template layer
