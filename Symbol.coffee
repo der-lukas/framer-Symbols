@@ -32,6 +32,7 @@ copySourceToTarget = (source, target = false) ->
       # Create reference to the symbol instance
       target[subLayer.name]._instance = target
 
+# Copies default-state of target and applies it to the symbol's descendants
 copyStatesFromTarget = (source, target, stateName, animationOptions = false) ->
   targets = []
 
@@ -40,12 +41,12 @@ copyStatesFromTarget = (source, target, stateName, animationOptions = false) ->
 
   for subLayer in source.descendants
     if subLayer.constructor.name is "SVGLayer"
-      delete targets[subLayer.name].states["default"].html
+      delete targets[subLayer.name].states.default.html
 
     if subLayer.constructor.name is "SVGPath" or subLayer.constructor.name is "SVGGroup"
-      subLayer._svgLayer.states["#{stateName}"] = targets[subLayer.name]._svgLayer.states["default"]
+      subLayer._svgLayer.states["#{stateName}"] = targets[subLayer.name]._svgLayer.states.default
 
-    subLayer.states["#{stateName}"] = targets[subLayer.name].states["default"]
+    subLayer.states["#{stateName}"] = targets[subLayer.name].states.default
 
     if animationOptions
       subLayer.states["#{stateName}"].animationOptions = animationOptions
@@ -54,30 +55,17 @@ copyStatesFromTarget = (source, target, stateName, animationOptions = false) ->
       if subLayer.constructor.name is "SVGPath" or subLayer.constructor.name is "SVGGroup"
         subLayer._svgLayer.states["#{stateName}"].animationOptions = animationOptions
 
-Layer::addSymbolState = (stateName, target, animationOptions = false) ->
-  if stateName isnt "default"
-    delete target.states.default[prop] for prop in ['x', 'y']
-    @.states["#{stateName}"] = target.states.default
-
-  if animationOptions
-    @.states["#{stateName}"].animationOptions = animationOptions
-
-  copyStatesFromTarget(@, target, stateName, animationOptions)
-
 Layer::replaceWithSymbol = (symbol) ->
-  symbol.parent = @.parent
-  symbol.x = @.x
-  symbol.y = @.y
-
-  for stateName in symbol.stateNames
-    symbol.states["#{stateName}"].x = @.x
-    symbol.states["#{stateName}"].y = @.y
-
-  @.destroy()
+  throw "Error: layer.replaceWithSymbol(symbolInstance) is deprecated - use symbolInstance.replaceLayer(layer) instead."
+  # symbol.replaceLayer @
 
 exports.Symbol = (layer, states = false, events = false) ->
   class Symbol extends Layer
     constructor: (@options = {} ) ->
+      @options.x ?= 0
+      @options.y ?= 0
+      @options.replaceLayer ?= false
+
       super _.defaults @options, layer.props
 
       for child in layer.descendants
@@ -91,19 +79,24 @@ exports.Symbol = (layer, states = false, events = false) ->
       @.customProps = @options.customProps
 
       copySourceToTarget(layer, @)
+      copyStatesFromTarget(@, layer, 'default', false)
 
-      @.addSymbolState('default', layer, false)
+      if @options.replaceLayer
+        @.replaceLayer @options.replaceLayer
 
+      # Apply states to symbol if supplied
       if states
         for stateName, stateProps of states
-
+          # Filter animationOptions out of states and apply them to symbol
           if stateName is "animationOptions"
             @.animationOptions = stateProps
             for descendant in @.descendants
               descendant.animationOptions = @.animationOptions
           else
+            # If there's no template supplied
             if !stateProps.template
               throw "Error: You need to supply a template-layer for each state."
+            # Add the new symbol-state
             else
               @.addSymbolState(stateName, stateProps.template, stateProps.animationOptions)
 
@@ -113,11 +106,14 @@ exports.Symbol = (layer, states = false, events = false) ->
           if typeof stateProps.y != 'undefined'
             @.states["#{stateName}"].y = stateProps.y
 
+      # Apply events to symbol if supplied
       if events
         for trigger, action of events
+          # if event listener is applied to the symbol-instance
           if _.isFunction(action)
             if Events[trigger]
               @on Events[trigger], action
+          # if event listener is applied to a symbol's descendant
           else
             if @[trigger]
               for triggerName, actionProps of action
@@ -132,6 +128,7 @@ exports.Symbol = (layer, states = false, events = false) ->
       # Handle the stateSwitch for all descendants
       @.on Events.StateSwitchStart, (from, to) ->
         for child in @.descendants
+          # Special handling for TextLayers
           if child.constructor.name == "TextLayer"
             child.states[to].text = child.text
             child.states[to].textAlign = child.props.styledTextOptions.alignment
@@ -156,6 +153,30 @@ exports.Symbol = (layer, states = false, events = false) ->
       for stateName, stateProps of states
         if stateProps.template
           stateProps.template.destroy()
+
+    # Adds a new state
+    addSymbolState: (stateName, target, animationOptions = false) ->
+      # Delete x,y props from templates default state
+      delete target.states.default[prop] for prop in ['x', 'y']
+
+      # Create a new state for the symbol and assign remaining props
+      @.states["#{stateName}"] = target.states.default
+
+      # Assign animationOptions to the state if supplied
+      if animationOptions
+        @.states["#{stateName}"].animationOptions = animationOptions
+
+      copyStatesFromTarget(@, target, stateName, animationOptions)
+
+    # Replacement for replaceWithSymbol()
+    replaceLayer: (layer) ->
+      @.parent = layer.parent
+      @.x = layer.x
+      @.y = layer.y
+      @.states.default.x = @.x
+      @.states.default.y = @.y
+
+      layer.destroy()
 
 # A backup for the deprecated way of calling the class
 exports.createSymbol = (layer, states, events) -> exports.Symbol(layer, states, events)
