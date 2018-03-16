@@ -36,25 +36,25 @@ Easily create reusable components in Framer, without the hassle of actually writ
 
 ### Create a new Symbol
 
-`SymbolName = new Symbol(template, states, events)`
+`SymbolName = Symbol(template, states, events)`
 
 The Symbol-class has the following parameters:
 
 Parameter | Type | Description
 -------- | ---- | -------
-`template` | layer | `required` This is the layer, that will be used as template
+`template` | layer | `required` This is the layer, that will be used as default-template
 `states` | Object | `optional` A states-object, that will be applied to every instance [Read More](#symbol-states)
 `events` | Object | `optional` An events-object, that will be applied to every instance [Read More](#symbol-events)
 
 ##### Example
-Let's create a `Button`-Symbol as an example:
+Let's create a `Button`-Symbol in its simplest form as an example:
 
 ``` coffeescript
 #Require the module
 {Symbol} = require 'Symbol'
 
 # Initialize your symbol
-Button = new Symbol(button_default)
+Button = Symbol(button_default)
 
 # Create buttonInstance
 buttonInstance = new Button
@@ -68,7 +68,7 @@ buttonInstance = new Button
 ## Symbol States
 ![framerdemo](https://dr5mo5s7lqrtc.cloudfront.net/items/440L270G0E3I0a2n263W/Bildschirmfoto%202017-08-02%20um%2021.43.45.png?X-CloudApp-Visitor-Id=2808700&v=91c69262)
 
-But wait... there's more! The module also gives you the power to create different states for your symbol in **Design-Mode** and apply those in Code.
+The module also gives you the ability to create different states for your symbol in **Design-Mode** and apply those in Code.
 
 You can either apply **common** or **specific** states.
 
@@ -80,7 +80,8 @@ For each state you can define following properties:
 
 Property | Type | Description
 -------- | ---- | -------
-`template` | layer | `required` The template that should be used as state
+`template` | layer | `optional` The template that should be used as state
+`properties` | Object | `optional` You can supply props that should change for this state
 `animationOptions` | Object | `optional` The applied animation options [Framer Docs](https://framer.com/docs/#layer.states)
 
 ##### Example
@@ -103,7 +104,7 @@ commonStates =
       time: 1
 
 # Initialize your symbol
-Button = new Symbol(button_default, commonStates)
+Button = Symbol(button_default, commonStates)
 
 # Create buttonInstanceOne
 buttonInstanceOne = new Button
@@ -120,10 +121,27 @@ buttonInstanceTwo = new Button
 
 ... now both `buttonInstanceOne` and `buttonInstanceTwo` have the 3 states `default, disabled` and `active`.
 
-### Specific States
-Specific states apply to a... specific instance :scream_cat:
 
-Specific states are being applied with `layer.addSymbolState(name, template)`
+The `animationOptions` don't need to be supplied for each commonState, but can also be set as default for all states like this:
+
+```coffeescript
+...
+# Create common states
+commonStates =
+  animationOptions:
+    curve: Spring(damping: 1)
+    time: 0.7
+  disabled:
+    template: button_disabled
+  active:
+    template: button_active
+...
+```
+
+### Specific States
+Specific states apply to a specific instance :scream_cat:
+
+Specific states are being applied with `layer.addSymbolState(name, template, animationOptions = false)`
 
 ##### Example
 ```coffeescript
@@ -186,7 +204,7 @@ commonEvents =
     Tap: -> print "Foo"
 
 # Initialize your symbol
-Button = new Symbol(button_default, commonStates, commonEvents)
+Button = Symbol(button_default, commonStates, commonEvents)
 
 ...
 ```
@@ -216,8 +234,10 @@ This happens recursive for all descendants of your symbol, so that every child-l
 
 On `StateSwitchStart`-event of the symbol, the module applies the stateSwitch to all descendants recursively, so that all states stay in sync.
 
+[![Github All Releases](https://img.shields.io/github/downloads/der-lukas/framer-Symbols/total.svg)]()
+
 ## Tutorials
-Chris Slowik [(@chrislowik)](https://twitter.com/chrisslowik) created two awesome tutorials on designers.how, check them out here:
+Chris Slowik [(@chrislowik)](https://twitter.com/chrisslowik) created a series of tutorials on designers.how, check them out here:
 https://designers.how/episodes/design-based-symbols-in-framer
 
 ----------
