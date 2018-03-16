@@ -1,9 +1,11 @@
+# Removes IDs from SVG
 removeIds = (htmlString) ->
   ids = Utils.getIdAttributesFromString(htmlString)
   for id in ids
     htmlString = htmlString.replace(/ id="(.*?)"/g, "") ;
   return htmlString
 
+# Copies all descendants of a layer
 copySourceToTarget = (source, target = false) ->
   if source.children.length > 0
     for subLayer in source.descendants
@@ -33,10 +35,12 @@ copySourceToTarget = (source, target = false) ->
       target[subLayer.name]._instance = target
 
 # Copies default-state of target and applies it to the symbol's descendants
-copyStatesFromTarget = (source, target, stateName, animationOptions = false) ->
+copyStatesFromTarget = (source, target, stateName, animationOptions = false, ignoredProps = false, stateProps = false) ->
   targets = []
 
   for layer in target.descendants
+    if layer.constraintValues
+      layer.frame = Utils.calculateLayoutFrame(layer.parent.frame, layer)
     targets[layer.name] = layer
 
   for subLayer in source.descendants
@@ -46,7 +50,22 @@ copyStatesFromTarget = (source, target, stateName, animationOptions = false) ->
     if subLayer.constructor.name is "SVGPath" or subLayer.constructor.name is "SVGGroup"
       subLayer._svgLayer.states["#{stateName}"] = targets[subLayer.name]._svgLayer.states.default
 
-    subLayer.states["#{stateName}"] = targets[subLayer.name].states.default
+    if ignoredProps
+      # Change the props of the descendants of a symbol inside commonStates
+      for ignoredProp, ignoredVal of ignoredProps
+        if targets[subLayer.name].name is ignoredProp
+          for descendantProp, descendantVal of ignoredVal
+            targets[subLayer.name].states.default[descendantProp] = descendantVal
+
+    if stateProps
+      # Change the props of the descendants of a symbol inside commonStates
+      for stateProp, stateVal of stateProps
+        if targets[subLayer.name].name is stateProp
+          for descendantProp, descendantVal of stateVal
+            targets[subLayer.name].states.default[descendantProp] = descendantVal
+
+    if stateName isnt "default" or (subLayer.constructor.name is "SVGPath" or subLayer.constructor.name is "SVGGroup" or subLayer.constructor.name is "SVGLayer")
+      subLayer.states["#{stateName}"] = targets[subLayer.name].states.default
 
     if animationOptions
       subLayer.states["#{stateName}"].animationOptions = animationOptions
@@ -55,16 +74,30 @@ copyStatesFromTarget = (source, target, stateName, animationOptions = false) ->
       if subLayer.constructor.name is "SVGPath" or subLayer.constructor.name is "SVGGroup"
         subLayer._svgLayer.states["#{stateName}"].animationOptions = animationOptions
 
+    if targets[subLayer.name].constructor.name isnt "SVGPath" or targets[subLayer.name].constructor.name isnt "SVGGroup"
+      targets[subLayer.name].layout()
+
+  target.destroy()
+
 Layer::replaceWithSymbol = (symbol) ->
-  throw "Error: layer.replaceWithSymbol(symbolInstance) is deprecated - use symbolInstance.replaceLayer(layer) instead."
+  Utils.throwInStudioOrWarnInProduction "Error: layer.replaceWithSymbol(symbolInstance) is deprecated - use symbolInstance.replaceLayer(layer) instead."
   # symbol.replaceLayer @
 
 exports.Symbol = (layer, states = false, events = false) ->
   class Symbol extends Layer
-    constructor: (@options = {} ) ->
+    constructor: (@options = {}) ->
       @options.x ?= 0
       @options.y ?= 0
       @options.replaceLayer ?= false
+
+      blacklist = ['parent', 'replaceLayer']
+      @.ignoredProps = {}
+
+      for key, val of @options
+        @.ignoredProps[key] = val
+
+      for prop in blacklist
+        delete @.ignoredProps[prop]
 
       super _.defaults @options, layer.props
 
@@ -79,32 +112,25 @@ exports.Symbol = (layer, states = false, events = false) ->
       @.customProps = @options.customProps
 
       copySourceToTarget(layer, @)
-      copyStatesFromTarget(@, layer, 'default', false)
+      copyStatesFromTarget(@, layer, 'default', false, @.ignoredProps)
 
       if @options.replaceLayer
         @.replaceLayer @options.replaceLayer
 
       # Apply states to symbol if supplied
       if states
-        for stateName, stateProps of states
+        newStates = _.cloneDeep(states)
+        for stateName, stateProps of newStates
           # Filter animationOptions out of states and apply them to symbol
           if stateName is "animationOptions"
             @.animationOptions = stateProps
             for descendant in @.descendants
               descendant.animationOptions = @.animationOptions
           else
-            # If there's no template supplied
             if !stateProps.template
-              throw "Error: You need to supply a template-layer for each state."
-            # Add the new symbol-state
-            else
-              @.addSymbolState(stateName, stateProps.template, stateProps.animationOptions)
+              stateProps.template = layer
 
-          # Change the x,y position of a symbol inside commonStates
-          if typeof stateProps.x != 'undefined'
-            @.states["#{stateName}"].x = stateProps.x
-          if typeof stateProps.y != 'undefined'
-            @.states["#{stateName}"].y = stateProps.y
+            @.addSymbolState(stateName, stateProps.template, stateProps.animationOptions, @.ignoredProps, stateProps)
 
       # Apply events to symbol if supplied
       if events
@@ -127,54 +153,101 @@ exports.Symbol = (layer, states = false, events = false) ->
 
       # Handle the stateSwitch for all descendants
       @.on Events.StateSwitchStart, (from, to) ->
+        if from is to
+          return
+
         for child in @.descendants
           # Special handling for TextLayers
-          if child.constructor.name == "TextLayer"
+          if child.constructor.name is "TextLayer"
             child.states[to].text = child.text
             child.states[to].textAlign = child.props.styledTextOptions.alignment
             child.states[to].width = child.width
             child.states[to].height = child.height
 
-            if child.template && Object.keys(child.template).length > 0
+            if child.template and Object.keys(child.template).length > 0
               child.states[to].template = child.template
 
           else
-            if child.image && (child.states[to].image != child.image)
+            if child.image and (child.states[to].image isnt child.image)
               child.states[to].image = child.image
 
           # Kickstart the stateSwitch
           child.animate to
 
-    # Destroy default template layer
-    layer.destroy()
+      # Destroy state template layers
+      if states
+        for stateName, stateProps of states
+          if stateProps.template
+            stateProps.template.destroy()
 
-    # Destroy state template layers
-    if states
-      for stateName, stateProps of states
-        if stateProps.template
-          stateProps.template.destroy()
+      layer.destroy()
 
     # Adds a new state
-    addSymbolState: (stateName, target, animationOptions = false) ->
+    addSymbolState: (stateName, target, animationOptions = false, ignoredProps = false, stateProps = false) ->
+      newTarget = target.copy()
+      targets = []
+
+      for descendant in target.descendants
+        targets[descendant.name] = descendant
+
+      for descendant in newTarget.descendants
+        descendant.constraintValues = targets[descendant.name].constraintValues
+        if descendant.constructor.name is "SVGPath" or descendant.constructor.name is "SVGGroup"
+          descendant.states.default = targets[descendant.name].states.default
+
+      # Resize the template before using its values to respect constraint-changes
+      if ignoredProps.width
+        newTarget.width = ignoredProps.width
+      if ignoredProps.height
+        newTarget.height = ignoredProps.height
+
       # Delete x,y props from templates default state
-      delete target.states.default[prop] for prop in ['x', 'y']
+      delete newTarget.states.default[prop] for prop in ['x', 'y']
+
+      # Apply all other props that should stay the same for all states
+      if ignoredProps
+        delete newTarget.states.default[prop] for prop of ignoredProps
+
+      if stateProps.width
+        newTarget.width = stateProps.width
+      if stateProps.height
+        newTarget.height = stateProps.height
+
+      if stateProps
+        # Change the props of a symbol inside commonStates
+        for stateProp, stateVal of stateProps
+          # Check if it's a property
+          if typeof newTarget.props[stateProp] isnt 'undefined'
+            newTarget.states.default[stateProp] = stateVal
+
+            delete stateProps[stateProp]
 
       # Create a new state for the symbol and assign remaining props
-      @.states["#{stateName}"] = target.states.default
+      @.states["#{stateName}"] = newTarget.states.default
 
       # Assign animationOptions to the state if supplied
       if animationOptions
         @.states["#{stateName}"].animationOptions = animationOptions
 
-      copyStatesFromTarget(@, target, stateName, animationOptions)
+      copyStatesFromTarget(@, newTarget, stateName, animationOptions, ignoredProps, stateProps)
 
     # Replacement for replaceWithSymbol()
-    replaceLayer: (layer) ->
+    replaceLayer: (layer, resize = false) ->
       @.parent = layer.parent
       @.x = layer.x
       @.y = layer.y
-      @.states.default.x = @.x
-      @.states.default.y = @.y
+
+      if resize
+        @.width = layer.width
+        @.height = layer.height
+
+      for stateName in @.stateNames
+        @.states[stateName].x = layer.x
+        @.states[stateName].y = layer.y
+
+        if resize
+          @.states[stateName].width = layer.width
+          @.states[stateName].height = layer.height
 
       layer.destroy()
 
