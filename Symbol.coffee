@@ -161,8 +161,6 @@ exports.Symbol = (layer, states = false, events = false) ->
           if child.constructor.name is "TextLayer"
             child.states[to].text = child.text
             child.states[to].textAlign = child.props.styledTextOptions.alignment
-            child.states[to].width = child.width
-            child.states[to].height = child.height
 
             if child.template and Object.keys(child.template).length > 0
               child.states[to].template = child.template
