@@ -89,6 +89,7 @@ exports.Symbol = (layer, states = false, events = false) ->
       @options.x ?= 0
       @options.y ?= 0
       @options.replaceLayer ?= false
+      @options.initialState ?= false
 
       blacklist = ['parent', 'replaceLayer']
       @.ignoredProps = {}
@@ -110,6 +111,7 @@ exports.Symbol = (layer, states = false, events = false) ->
               @[key][prop] = value
 
       @.customProps = @options.customProps
+      @.initialState = @options.initialState
 
       copySourceToTarget(layer, @)
       copyStatesFromTarget(@, layer, 'default', false, @.ignoredProps)
@@ -180,6 +182,13 @@ exports.Symbol = (layer, states = false, events = false) ->
 
       layer.destroy()
 
+      # If there's an initial state defined, switch to it
+      if @options.initialState
+        if @.states[@options.initialState]
+          @.stateSwitch @options.initialState
+        else
+          Utils.throwInStudioOrWarnInProduction "The supplied initialState '#{@options.initialState}' is undefined"
+
     # Adds a new state
     addSymbolState: (stateName, target, animationOptions = false, ignoredProps = false, stateProps = false) ->
       newTarget = target.copy()
@@ -228,6 +237,33 @@ exports.Symbol = (layer, states = false, events = false) ->
         @.states["#{stateName}"].animationOptions = animationOptions
 
       copyStatesFromTarget(@, newTarget, stateName, animationOptions, ignoredProps, stateProps)
+
+    # Override original stateSwitch to make it work with symbols
+    stateSwitch: (stateName) ->
+
+      # Make backup of the original animation time
+      if @.states[stateName].animationOptions
+        animTime = @.states[stateName].animationOptions.time
+      else
+        animTime = @.states.animationOptions.time
+
+      # Set the animation time of all symbol layers to zero
+      for desc in @.descendants
+        if desc.states[stateName].animationOptions
+          desc.states[stateName].animationOptions.time = 0
+        else
+          desc.states.animationOptions.time = 0
+
+      # Trigger the stateSwitch
+      @.animate stateName,
+        time: 0
+
+      # Reset the animation time to the original time
+      for desc in @.descendants
+        if desc.states[stateName].animationOptions
+          desc.states[stateName].animationOptions.time = animTime
+        else
+          desc.states.animationOptions.time = animTime
 
     # Replacement for replaceWithSymbol()
     replaceLayer: (layer, resize = false) ->
