@@ -102,14 +102,6 @@ exports.Symbol = (layer, states = false, events = false) ->
 
       super _.defaults @options, layer.props
 
-      for child in layer.descendants
-        @[child.name] = child
-
-        for key, props of @options
-          if key is child.name
-            for prop, value of props
-              @[key][prop] = value
-
       @.customProps = @options.customProps
       @.initialState = @options.initialState
 
@@ -118,6 +110,14 @@ exports.Symbol = (layer, states = false, events = false) ->
 
       if @options.replaceLayer
         @.replaceLayer @options.replaceLayer
+
+      for child in @.descendants
+        @[child.name] = child
+
+        for key, props of @options
+          if key is child.name
+            for prop, value of props
+              @[key][prop] = value
 
       # Apply states to symbol if supplied
       if states
