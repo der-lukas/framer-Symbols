@@ -244,26 +244,33 @@ exports.Symbol = (layer, states = false, events = false) ->
       # Make backup of the original animation time
       if @.states[stateName].animationOptions
         animTime = @.states[stateName].animationOptions.time
+        animCurve = @.states[stateName].animationOptions.curve
       else
         animTime = @.states.animationOptions.time
+        animCurve = @.states.animationOptions.curve
 
       # Set the animation time of all symbol layers to zero
       for desc in @.descendants
         if desc.states[stateName].animationOptions
           desc.states[stateName].animationOptions.time = 0
+          desc.states[stateName].animationOptions.curve = "linear"
         else
           desc.states.animationOptions.time = 0
+          desc.states.animationOptions.curve = "linear"
 
       # Trigger the stateSwitch
       @.animate stateName,
         time: 0
+        curve: "linear"
 
       # Reset the animation time to the original time
       for desc in @.descendants
         if desc.states[stateName].animationOptions
           desc.states[stateName].animationOptions.time = animTime
+          desc.states[stateName].animationOptions.curve = animCurve
         else
           desc.states.animationOptions.time = animTime
+          desc.states.animationOptions.curve = animCurve
 
     # Replacement for replaceWithSymbol()
     replaceLayer: (layer, resize = false) ->
