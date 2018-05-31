@@ -252,15 +252,15 @@ exports.Symbol = (layer, states = false, events = false) ->
       # Set the animation time of all symbol layers to zero
       for desc in @.descendants
         if desc.states[stateName].animationOptions
-          desc.states[stateName].animationOptions.time = 0
+          desc.states[stateName].animationOptions.time = 0.05
           desc.states[stateName].animationOptions.curve = "linear"
         else
-          desc.states.animationOptions.time = 0
+          desc.states.animationOptions.time = 0.05
           desc.states.animationOptions.curve = "linear"
 
       # Trigger the stateSwitch
       @.animate stateName,
-        time: 0
+        time: 0.05
         curve: "linear"
 
       # Reset the animation time to the original time
