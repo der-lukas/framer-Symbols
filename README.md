@@ -1,4 +1,4 @@
-# framer-Symbols
+# Framer Symbols
 Create symbols[*](#-pssst-it-actually-is-a-class) in Framer
 
 ![framerdemo](https://cdn.pbrd.co/images/HnRvNeh.gif)
