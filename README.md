@@ -149,7 +149,7 @@ Specific states are being applied with `layer.addSymbolState(name, template, ani
 {Symbol} = require 'Symbol'
 
 # Initialize your symbol
-Button = new Symbol(button_default, commonStates)
+Button = Symbol(button_default, commonStates)
 
 # Create buttonInstanceOne
 buttonInstanceOne = new Button
@@ -240,9 +240,10 @@ https://designers.how/episodes/design-based-symbols-in-framer
 
 ----------
 ## Disclaimer
-This module is still very experimental and will probably sooner than later be unnecessary, because the beautiful people at Framer will make a proper implementation for something like this.
+This module is meant to be filling the gap until Framer releases their own implementation of Symbols/Components.
+Even though I try to thoroughly test everything before I release new features, there's always a risk of me breaking stuff or API changes.
 
-Meanwhile I'm going to keep hacking on this and would love your contribution! <3
+If you have any problems you run into or feature requests, feel free to open an issue or (even better) create a pull-request! <3
 
 ## Credits
 The code is based on the earlier exploration of [Andreas Wahlström's createClass-module](https://github.com/awt2542/createClass-for-Framer) - so thanks for that! :tada:
