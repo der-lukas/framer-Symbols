@@ -1,7 +1,7 @@
 # framer-Symbols
-A module to create symbols[*](#-pssst-it-actually-is-a-class) in Framer
+Create symbols[*](#-pssst-it-actually-is-a-class) in Framer
 
-![framerdemo](https://dr5mo5s7lqrtc.cloudfront.net/items/3z2z2A3P353E0Z1M3C2V/Screen%20Recording%202017-08-05%20at%2004.02%20PM.gif?X-CloudApp-Visitor-Id=2808700&v=08cd0efb)
+![framerdemo](https://cdn.pbrd.co/images/HnRvNeh.gif)
 
 ----------
 
@@ -66,7 +66,7 @@ buttonInstance = new Button
 ... now you have your `Button`-symbol ready to use and you can go back in **Design-Mode**, edit away and the changes will reflect in all of your instances in Code!
 
 ## Symbol States
-![framerdemo](https://dr5mo5s7lqrtc.cloudfront.net/items/440L270G0E3I0a2n263W/Bildschirmfoto%202017-08-02%20um%2021.43.45.png?X-CloudApp-Visitor-Id=2808700&v=91c69262)
+![framerdemo](https://cdn.pbrd.co/images/HnRI6Qe.png)
 
 The module also gives you the ability to create different states for your symbol in **Design-Mode** and apply those in Code.
 
@@ -233,8 +233,6 @@ When you supply templates-layer for a new `symbolState`, the module applies the 
 This happens recursive for all descendants of your symbol, so that every child-layer of a symbol has the same states as the parent.
 
 On `StateSwitchStart`-event of the symbol, the module applies the stateSwitch to all descendants recursively, so that all states stay in sync.
-
-[![Github All Releases](https://img.shields.io/github/downloads/der-lukas/framer-Symbols/total.svg)]()
 
 ## Tutorials
 Chris Slowik [(@chrislowik)](https://twitter.com/chrisslowik) created a series of tutorials on designers.how, check them out here:
