@@ -248,6 +248,11 @@ If you have any problems you run into or feature requests, feel free to open an 
 ## Credits
 The code is based on the earlier exploration of [Andreas Wahlström's createClass-module](https://github.com/awt2542/createClass-for-Framer) - so thanks for that! :tada:
 
+## Google Analytics
+Out of curiosity I've integrated Google Analytics into the project to get an idea of how many people are using the module.
+
+If you don't feel comfortable showing up in the stats, simply remove `require './GA.coffee'` from `Symbol.coffee` file.
+
 ----------
 #### TODO
 

@@ -1,3 +1,6 @@
+# GA Import
+require './GA.coffee'
+
 # Removes IDs from SVG
 removeIds = (htmlString) ->
   ids = Utils.getIdAttributesFromString(htmlString)

@@ -1,10 +1,13 @@
 {
     "name": "Symbols",
-    "description": "A module to create symbols in Framer",
+    "description": "Create symbols in Framer",
     "author": "Lukas Guschlbauer",
 
     "require": "{Symbol} = require 'Symbol'",
-    "install": "Symbol.coffee",
+    "install": [
+        "Symbol.coffee",
+        "GA.coffee"
+    ],
     "example": "example.coffee",
 
     "thumb": "thumb.gif"
