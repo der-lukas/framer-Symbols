@@ -251,7 +251,7 @@ The code is based on the earlier exploration of [Andreas Wahlström's createClas
 ## Google Analytics
 Out of curiosity I've integrated Google Analytics into the project to get an idea of how many people are using the module.
 
-If you don't feel comfortable showing up in the stats, simply remove `require './GA.coffee'` from `Symbol.coffee` file.
+If you don't feel comfortable showing up in the stats, simply remove `useGA(true)` inside `Symbol.coffee` file.
 
 ----------
 #### TODO

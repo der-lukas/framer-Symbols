@@ -4,10 +4,7 @@
     "author": "Lukas Guschlbauer",
 
     "require": "{Symbol} = require 'Symbol'",
-    "install": [
-        "Symbol.coffee",
-        "GA.coffee"
-    ],
+    "install": "Symbol.coffee",
     "example": "example.coffee",
 
     "thumb": "thumb.gif"
